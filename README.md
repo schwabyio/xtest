@@ -43,9 +43,8 @@ Postman extended test (xtest) is a module that can be used within Postman/Newman
 
 <div id='startXTest'/>
 
-**```startXTest()```**
+# startXTest()
 
-<br/>
 This function is used once at the beginning of each test to initialize xtest.
 <details>
   <summary>Click for details.</summary>
@@ -74,9 +73,8 @@ undefined
 
 <div id='expectResponseStatusCodeToBe'/>
 
-**```expectResponseStatusCodeToBe()```**
+# expectResponseStatusCodeToBe()
 
-<br/>
 This function is used to validate the response http status code.
 <br/>
 <br/>
@@ -225,8 +223,8 @@ undefined
 
 <div id='expectResponseToHaveHeader'/>
 
-**```expectResponseToHaveHeader()```**
-<br/>
+# expectResponseToHaveHeader()
+
 This function is used to validate the response http headers.
 <br/>
 <br/>
@@ -442,8 +440,8 @@ undefined
 
 <div id='expectResponseBodyToHaveProperty'/>
 
-**```expectResponseBodyToHaveProperty()```**
-<br/>
+# expectResponseBodyToHaveProperty()
+
 This function is used to validate a response body property (xml is internally converted to json).
 <br/>
 <br/>
@@ -723,8 +721,8 @@ undefined
 
 <div id='expectResponseBodyToHaveUnorderedArray'/>
 
-**```expectResponseBodyToHaveUnorderedArray()```**
-<br/>
+# expectResponseBodyToHaveUnorderedArray()
+
 This function is used to validate a response body json array that does not have a sorted or consistent order.
 <br/>
 <br/>
@@ -799,8 +797,8 @@ undefined
 
 <div id='endXTest'/>
 
-**```endXTest()```**
-<br/>
+# endXTest()
+
 This function is used once at the end of each test to finalize xtest.
 <details>
   <summary>Click for details.</summary>
@@ -823,8 +821,7 @@ undefined
 
 <div id='date'/>
 
-**```date(dateFormat [String], secondsOffset [Number format: +-offsetInSeconds], timeZoneScheme [String])```**
-<br/>
+# date()
 
 This function can be used to dynamically generate a date/time value in any required format. [See here for supported dateFormat specifiers.](https://github.com/samsonjs/strftime/blob/master/Readme.md#supported-specifiers)
 <details>
