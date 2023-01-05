@@ -102,7 +102,7 @@ undefined
 **Try it out in Postman:**
 <br/>
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-ffe6a29c-ba8b-4443-bbc0-a11b57eebcb6?action=collection%2Ffork&collection-url=entityId%3D24782047-ffe6a29c-ba8b-4443-bbc0-a11b57eebcb6%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3){:target="_blank"}
+[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-ffe6a29c-ba8b-4443-bbc0-a11b57eebcb6?action=collection%2Ffork&collection-url=entityId%3D24782047-ffe6a29c-ba8b-4443-bbc0-a11b57eebcb6%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
 
 </details>
 <br/><br/>
