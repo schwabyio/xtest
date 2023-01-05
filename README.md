@@ -20,7 +20,7 @@
 # xtest - Postman Extended Test
 
 ## Overview
-Postman extended test (xtest) is a module that can be used within Postman/Newman to test your APIs with speed, simplicity, and at scale. **There is no need to write any code**; just use the simple, yet powerful, functions provided. And as a bonus, your team/organization will be able to quickly and effortlessly understand tests across all projects, no matter who creates them.
+Postman extended test (xtest) is a module that can be used within [Postman](https://www.postman.com/downloads/)/[Newman](https://github.com/postmanlabs/newman) to test your APIs with speed, simplicity, and at scale. **There is no need to write any code**; just use the simple, yet powerful, functions provided. And as a bonus, your team/organization will be able to quickly and effortlessly understand tests across all projects, no matter who creates them.
 
 <br/>
 
