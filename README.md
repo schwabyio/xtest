@@ -20,7 +20,7 @@
 # xtest - Postman Extended Test
 
 ## Overview
-Postman extended test (xtest) is a module that can be used within [Postman](https://www.postman.com/downloads/)/[Newman](https://github.com/postmanlabs/newman) to test your APIs with speed, simplicity, and at scale. **There is no need to write any code**; just use the simple, yet powerful, functions provided. And as a bonus, your team/organization will be able to quickly and effortlessly understand tests across all projects, no matter who creates them.
+Postman extended test (xtest) is a module that is used within [Postman](https://www.postman.com/downloads/)/[xRunner](https://github.com/schwabyio/xrunner) to test your APIs with speed, simplicity, and at scale. **There is no need to write any code**; just use the simple, yet powerful, functions provided. And as a bonus, your team/organization will be able to quickly and effortlessly understand tests across all projects, no matter who creates them.
 
 <br/>
 
@@ -31,9 +31,15 @@ Postman extended test (xtest) is a module that can be used within [Postman](http
 <br/>
 
 ## How To Install xtest Within Postman Desktop App
-1. Copy the latest minified code (click the "Copy source to clipboard" button): https://github.com/schwabyio/xtest/blob/master/xtest.min.js
-2. Paste this code as a Postman global variable with key ```xtest```: Postman App -> Environment -> Globals -> Edit
-3. Create another Postman global variable (same as step 2) with key ```useStrictValidation``` and a boolean value of ```true```.
+Open your Postman App and create the following two global variables (Postman App -> Environment -> Globals -> Edit):
+1. VARIABLE name of ```useStrictValidation``` with a CURRENT VALUE of ```true```.
+2. VARIABLE name of ```xtest``` with a CURRENT VALUE using the latest xtest minified code (click the "Copy source to clipboard" button) located here: https://github.com/schwabyio/xtest/blob/master/xtest.min.js
+
+<br/>
+
+That's it! You are now ready to use any of the documented functions below.
+
+NOTE: You can use the ```Run in Postman``` button located under each function to import an example one at a time OR you can import all of the examples in bulk from here: https://github.com/schwabyio/xtest/tree/main/tests/postman/demo
 
 <br/>
 
