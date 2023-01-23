@@ -31,7 +31,7 @@ Postman extended test (xtest) is a module that is used within [Postman](https://
 <br/>
 
 ## How To Install xtest Within Postman Desktop App
-Open your Postman App and create the following two global variables (Postman App -> Environment -> Globals -> Edit):
+Open your Postman App and create the following two global variables (Postman App -> Environment -> Globals -> Add/Edit):
 1. VARIABLE name of ```useStrictValidation``` with a CURRENT VALUE of ```true```.
 2. VARIABLE name of ```xtest``` with a CURRENT VALUE using the latest xtest minified code (click the "Copy source to clipboard" button) located here: https://github.com/schwabyio/xtest/blob/master/xtest.min.js
 
