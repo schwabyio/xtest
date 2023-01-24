@@ -41,7 +41,8 @@ Open your Postman App and create the following two global variables (Postman App
 If you still need help, check out this video:
 
 
-https://user-images.githubusercontent.com/118861343/214411936-789c44c4-f519-43ab-8efd-e2a4d863bf24.mp4
+
+https://user-images.githubusercontent.com/118861343/214447365-577cf802-2c28-4632-8964-5fca068d128f.mp4
 
 
 
