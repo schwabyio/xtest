@@ -10,7 +10,7 @@
 function xtest() {
   'use strict'
   //Global Variables
-  var version = '1.0.0'
+  var version = '1.1.0'
   var xml2js = require('xml2js')
   var strictValidationEnabled = false
   var copyOfResponseStatusCode = 0
@@ -18,6 +18,7 @@ function xtest() {
   var copyOfResponseHeadersList = []
   var copyOfResponseTime = 0
   var copyOfResponseBodyObject = {}
+  const INFINITY = 1 / 0
   var strftime = new strftimeModule()
   var timeZoneScheme = {}
   timeZoneScheme['A']   = '+0100'
@@ -451,13 +452,8 @@ function xtest() {
     var matchFound = false
     var allItemsMatch = false
     var arrayIndexMatch = 0
-    var jsonBasePathToArray = ''
+    var jsonBasePathToArray = jsonPathToArray
 
-    if (jsonPathToArray === '') {
-      jsonBasePathToArray = ''
-    } else {
-      jsonBasePathToArray = jsonPathToArray + '.'
-    }
 
     if ( (validationList instanceof Array) === false) {
       //FAIL: User error
@@ -478,11 +474,13 @@ function xtest() {
             actualValue = copyOfUnorderedArrayToValidate[j]
 
             if (actualValue === expectedValue) {
+              const fullPath = joinBasePathAndIndex(jsonBasePathToArray, j)
+              
               //PASS
-              assertionPass(assertionDescriptionPrefix, "Found a match of expectedValue '" + expectedValue + "' with actualValue at propertyPath: '" + jsonBasePathToArray + j.toString() + "'.")
+              assertionPass(assertionDescriptionPrefix, "Found a match of expectedValue '" + expectedValue + "' with actualValue at propertyPath: '" + fullPath + "'.")
 
               //Delete jsonPathToArray item from copyOfResponseBodyObject
-              deleteObjectValueByPath(copyOfResponseBodyObject, jsonBasePathToArray + j.toString())
+              deleteObjectValueByPath(copyOfResponseBodyObject, fullPath)
 
               matchFound = true
               break
@@ -523,7 +521,8 @@ function xtest() {
               specialHandling = undefined
             }
 
-            jsonPathToProperty = jsonBasePathToArray + i.toString() + "." + pathToProperty
+            jsonPathToProperty = joinBasePathIndexAndPathToProperty(jsonBasePathToArray, i, pathToProperty)
+
             actualValue = getObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
 
             //Support notThisExpectedKey
@@ -585,7 +584,8 @@ function xtest() {
               specialHandling = undefined
             }
 
-            jsonPathToProperty = jsonBasePathToArray + arrayIndexMatch.toString() + "." + pathToProperty
+            jsonPathToProperty = joinBasePathIndexAndPathToProperty(jsonBasePathToArray, arrayIndexMatch, pathToProperty)
+            
             actualValue = getObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
 
             //Support for notThisExpectedKey
@@ -638,6 +638,93 @@ function xtest() {
       //FAIL: Array not found based on jsonPathToArray
       assertionFail(assertionDescriptionPrefix, "Unable to locate Array given jsonPathToArray '" + jsonBasePathToArray + "' in json response body: " + JSON.stringify(copyOfResponseBodyObject))
       return
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////////
+    function joinBasePathAndIndex(jsonBasePathToArray, index) {
+      if (Array.isArray(jsonBasePathToArray)) {
+        //Return joined array
+        var newArray = JSON.parse(JSON.stringify(jsonBasePathToArray))
+        var indexAsString = index.toString()
+
+        newArray.push(indexAsString)
+
+        return newArray
+      } else {
+        //Return joined path (string)
+        var newFullPath = jsonBasePathToArray + '.' + index.toString()
+
+        return newFullPath
+      }
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////////
+    function joinBasePathIndexAndPathToProperty(jsonBasePathToArray, index, pathToProperty) {
+      if (Array.isArray(pathToProperty)) {
+        //If pathToProperty is an array then everything must be an array
+        var newJoinedPathAsArray = getPathAsArray(jsonBasePathToArray)
+
+        //Add index
+        newJoinedPathAsArray.push(index.toString())
+
+        //Add pathToProperty
+        pathToProperty.forEach(function(item) {
+          newJoinedPathAsArray.push(item.toString())
+        })
+
+        return newJoinedPathAsArray
+      } else {
+        //If pathToProperty is a string then everything must be a string
+        var newJoinedPathAsString = getPathAsString(jsonBasePathToArray)
+
+        //Add index
+        newJoinedPathAsString += '.' + index.toString()
+
+        //Add pathToProperty
+        newJoinedPathAsString += '.' + pathToProperty
+
+        return newJoinedPathAsString
+      }
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////////
+    function getPathAsArray(path) {
+      if (Array.isArray(path)) {
+        return path
+      } else { 
+        if (path.indexOf('.') >= 0) {
+          return path.split(".")
+        } else {
+          return [path]
+        }
+      }
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////////
+    function getPathAsString(path) {
+      if (Array.isArray(path)) {
+        var newPathAsString = ''
+
+        path.forEach(function(item) {
+          newPathAsString += '.' + item
+        })
+
+        return newPathAsString
+      } else {
+        return path
+      }
     }
   }
 
@@ -879,7 +966,10 @@ function xtest() {
   //
   //////////////////////////////////////////////////////////////////////////////
   function getObjectValueByPath(object, path) {
-    if (path === '') {
+
+    if (Array.isArray(path)) {
+      return get(object, path, undefined)
+    } else if (path === '') {
       //Return object as is
       return object
     } else {
@@ -891,24 +981,75 @@ function xtest() {
 
 
   //////////////////////////////////////////////////////////////////////////////
+  //  Taken from: https://github.com/lodash/lodash/blob/master/get.js
+  //////////////////////////////////////////////////////////////////////////////
+  function get(object, path, defaultValue) {
+    const result = object == null ? undefined : baseGet(object, path)
+    return result === undefined ? defaultValue : result
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //  Modified from https://github.com/lodash/lodash/blob/master/.internal/baseGet.js
+  //////////////////////////////////////////////////////////////////////////////
+  function baseGet(object, path) {
+    var index = 0
+    const length = path.length
+
+    while (object != null && index < length) {
+      object = object[toKey(path[index++])]
+    }
+
+    return (index && index == length) ? object : undefined
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //  Modified from https://github.com/lodash/lodash/blob/master/.internal/toKey.js
+  //////////////////////////////////////////////////////////////////////////////
+  function toKey(value) {
+
+    if (typeof value === 'string') {
+      return value
+    }
+
+    //const result = `${value}`
+    const result = value.toString()
+    return (result == '0' && (1 / value) == -INFINITY) ? '-0' : result
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
   //
   //////////////////////////////////////////////////////////////////////////////
   function deleteObjectValueByPath(object, path) {
 
     //Only delete property if strictValidationEnabled
     if (strictValidationEnabled === true) {
-      path.split(".").reduce(function(o, x) {
-        if (typeof o == "undefined" || o === null) {
-          return o
-        } else {
-          if (typeof o[x] === "object") {
-            return o[x]
-          } else {
-            delete o[x]
-          }
-        }
-      }, object)
+      if (Array.isArray(path)) {
+        deleteObjectValueByPathAsArray(object, path)
+      } else {
+        deleteObjectValueByPathAsArray(object, path.split("."))
+      }
     }
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  //////////////////////////////////////////////////////////////////////////////
+  function deleteObjectValueByPathAsArray(object, pathAsArray) {
+    pathAsArray.reduce(function(o, x) {
+      if (typeof o == "undefined" || o === null) {
+        return o
+      } else {
+        if (typeof o[x] === "object") {
+          return o[x]
+        } else {
+          delete o[x]
+        }
+      }
+    }, object)
   }
 
 
