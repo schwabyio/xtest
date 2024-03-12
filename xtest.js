@@ -10,7 +10,7 @@
 function xtest() {
   'use strict'
   //Global Variables
-  var version = '1.1.1'
+  var version = '1.1.2'
   var xml2js = require('xml2js')
   var strictValidationEnabled = false
   var copyOfResponseStatusCode = 0
@@ -498,7 +498,7 @@ function xtest() {
         //Validating an unordered array of objects
         for (i = 0; i < copyOfUnorderedArrayToValidate.length; i++) {
 
-          const numberOfArrayItemsToValidate = getObjectPropertyCount(cleanObject(copyOfUnorderedArrayToValidate[i]))
+          const numberOfArrayItemsToValidate = getObjectPropertyCount(cleanObjectExceptEmptyString(copyOfUnorderedArrayToValidate[i]))
 
           for (j = 0; j < validationList.length; j++) {
 
@@ -1100,6 +1100,25 @@ function xtest() {
     return function prune(current) {
       _.forOwn(current, function (value, key) {
         if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value) || (_.isString(value) && _.isEmpty(value)) || (_.isObject(value) && _.isEmpty(prune(value)))) {
+          delete current[key];
+        }
+      })
+      // Remove any leftover undefined values from the delete operation on an array
+      if (_.isArray(current)) _.pull(current, undefined)
+      return current
+    }(object)
+
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  //////////////////////////////////////////////////////////////////////////////
+  function cleanObjectExceptEmptyString(object) {
+
+    return function prune(current) {
+      _.forOwn(current, function (value, key) {
+        if (_.isUndefined(value) || _.isNull(value) || _.isNaN(value) || (_.isObject(value) && _.isEmpty(prune(value)))) {
           delete current[key];
         }
       })
