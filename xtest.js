@@ -10,7 +10,7 @@
 function xtest() {
   'use strict'
   //Global Variables
-  var version = '1.1.0'
+  var version = '1.1.1'
   var xml2js = require('xml2js')
   var strictValidationEnabled = false
   var copyOfResponseStatusCode = 0
@@ -475,7 +475,7 @@ function xtest() {
 
             if (actualValue === expectedValue) {
               const fullPath = joinBasePathAndIndex(jsonBasePathToArray, j)
-              
+
               //PASS
               assertionPass(assertionDescriptionPrefix, "Found a match of expectedValue '" + expectedValue + "' with actualValue at propertyPath: '" + fullPath + "'.")
 
@@ -497,7 +497,23 @@ function xtest() {
       } else {
         //Validating an unordered array of objects
         for (i = 0; i < copyOfUnorderedArrayToValidate.length; i++) {
+
+          const numberOfArrayItemsToValidate = getObjectPropertyCount(cleanObject(copyOfUnorderedArrayToValidate[i]))
+
           for (j = 0; j < validationList.length; j++) {
+
+            //Quick check when strictValidationEnabled
+            if (strictValidationEnabled === true) {
+              //Can quickly break out of loop if counts do not match
+              if (numberOfArrayItemsToValidate !== validationList.length) {
+                //console.log(`No need to continue with loop: numberOfArrayItemsToValidate (${numberOfArrayItemsToValidate}) does not match validationList.length (${validationList.length})`)
+                matchFound = false
+                break
+              } else {
+                //console.log(`Continue with loop: numberOfArrayItemsToValidate (${numberOfArrayItemsToValidate}) does match validationList.length (${validationList.length})`)
+              }
+            }
+
             //Required: pathToProperty
             if ( (validationList[j].hasOwnProperty('pathToProperty')) && (validationList[j]['pathToProperty'] !== "") ) {
               pathToProperty = validationList[j]['pathToProperty']
@@ -585,7 +601,7 @@ function xtest() {
             }
 
             jsonPathToProperty = joinBasePathIndexAndPathToProperty(jsonBasePathToArray, arrayIndexMatch, pathToProperty)
-            
+
             actualValue = getObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
 
             //Support for notThisExpectedKey
@@ -638,6 +654,32 @@ function xtest() {
       //FAIL: Array not found based on jsonPathToArray
       assertionFail(assertionDescriptionPrefix, "Unable to locate Array given jsonPathToArray '" + jsonBasePathToArray + "' in json response body: " + JSON.stringify(copyOfResponseBodyObject))
       return
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////
+    //
+    //////////////////////////////////////////////////////////////////////////////
+    function getObjectPropertyCount(obj) {
+      const propertyList = []
+
+      iterate(obj, '')
+
+      return propertyList.length
+
+      function iterate(obj, stack) {
+
+        for (var property in obj) {
+            if (obj.hasOwnProperty(property)) {
+                if (typeof obj[property] == "object") {
+                    iterate(obj[property], stack + '.' + property)
+                } else {
+                    //console.log(property + "   " + obj[property])
+                    propertyList.push(property + "   " + obj[property])
+                }
+            }
+        }
+      }
     }
 
 
@@ -700,7 +742,7 @@ function xtest() {
     function getPathAsArray(path) {
       if (Array.isArray(path)) {
         return path
-      } else { 
+      } else {
         if (path.indexOf('.') >= 0) {
           return path.split(".")
         } else {
@@ -773,9 +815,6 @@ function xtest() {
     var formatDate = strftime.timezone(timeZoneScheme[timeZone])
     return formatDate(dateFormat, new Date(Date.now() + (secondsOffset * 1000)))
   }
-
-
-  return this
 
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1781,3 +1820,4 @@ function xtest() {
   }
 }
 xtest()
+//module.exports = xtest
