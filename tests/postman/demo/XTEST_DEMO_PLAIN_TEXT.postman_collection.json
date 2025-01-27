@@ -1,0 +1,57 @@
+{
+	"info": {
+		"_postman_id": "88da487b-077f-454a-8a0a-8d55e64585f9",
+		"name": "XTEST_DEMO_PLAIN_TEXT",
+		"description": "Objective: Validate a plaint text response.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28098991"
+	},
+	"item": [
+		{
+			"name": "Validate response body property contains plain text response.",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Load xtest",
+							"var xtest = eval(pm.globals.get(\"xtest\"));",
+							"",
+							"//Start testing using xtest",
+							"startXTest(pm, pm.globals.get(\"useStrictValidation\"));",
+							"",
+							"//Validate response status code",
+							"expectResponseStatusCodeToBe(200);",
+							"",
+							"//Validate response body",
+							"expectResponseBodyToHaveProperty(\"plaintext\", \"This is a plain text response.\");",
+							"",
+							"//End testing using xtest",
+							"endXTest();"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://xtest-demo.httpsim.schwaby.io/plaintext",
+					"protocol": "https",
+					"host": [
+						"xtest-demo",
+						"httpsim",
+						"schwaby",
+						"io"
+					],
+					"path": [
+						"plaintext"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

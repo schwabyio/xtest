@@ -10,8 +10,9 @@
 function xtest() {
   'use strict'
   //Global Variables
-  var version = '1.1.2'
-  var xml2js = require('xml2js')
+  const version = '1.2.0'
+  const xml2js = require('xml2js')
+  const _ = require('lodash')
   var strictValidationEnabled = false
   var copyOfResponseStatusCode = 0
   var copyOfResponseReasonMessage = ''
@@ -19,8 +20,8 @@ function xtest() {
   var copyOfResponseTime = 0
   var copyOfResponseBodyObject = {}
   const INFINITY = 1 / 0
-  var strftime = new strftimeModule()
-  var timeZoneScheme = {}
+  const strftime = new strftimeModule()
+  const timeZoneScheme = {}
   timeZoneScheme['A']   = '+0100'
   timeZoneScheme['B']   = '+0200'  //e.g. EET - Eastern European Time
   timeZoneScheme['C']   = '+0300'  //e.g. EEDT - Eastern European Daylight Time
@@ -54,6 +55,9 @@ function xtest() {
   //////////////////////////////////////////////////////////////////////////////
   this.startXTest = function startXTest(pm, useStrictValidation) {
     var contentType = ''
+    const responseBodyAsString = pm.response.text() || ''
+
+    logInfo("Starting xtest version: " + version)
 
     if (useStrictValidation === "true" || useStrictValidation === true) {
       strictValidationEnabled = true
@@ -73,36 +77,47 @@ function xtest() {
     //Set copyOfResponseTime
     copyOfResponseTime = pm.response.responseTime
 
-    //Set copyOfResponseBodyObject
+    //Extract contentType header to identify how to parse response
     copyOfResponseHeadersList.forEach(function(item) {
       if (item.key.toLowerCase() === 'content-type') {
         contentType = item.value.toLowerCase()
       }
     })
 
-    if (/^application\/(.*)json/.test(contentType)) {
-      //Support json
-      try {
-        copyOfResponseBodyObject = JSON.parse(pm.response.text())
-      } catch (e) {
-        tests["ERROR trying to parse expected json response: " + e.message] = 0
-      }
-    } else if ( (/^application\/(.*)xml/.test(contentType)) || (/^text\/(.*)xml/.test(contentType)) ) {
-      //Support xml
-      if (pm.response.text() !== '') {
-        xml2js.parseString(pm.response.text(), {explicitArray: false, async: false}, function (err, result) {
+    //Set copyOfResponseBodyObject, only parse non-empty responseBodyAsString
+    if (responseBodyAsString !== '') {
+      if (/^application\/(.*)json/.test(contentType)) {
+        //Parse json
+        try {
+          copyOfResponseBodyObject = JSON.parse(responseBodyAsString)
+        } catch (e) {
+          internalFail("ERROR parsing json response: " + e.message)
+        }
+      } else if ( (/^application\/(.*)xml/.test(contentType)) || (/^text\/(.*)xml/.test(contentType)) ) {
+        //Parse xml
+        xml2js.parseString(responseBodyAsString, {explicitArray: false, async: false}, function (err, result) {
           if (err) {
-            console.log("xtest: ERROR CONVERTING XML TO JSON OBJECT: " + err)
+            internalFail("ERROR parsing xml response to json: " + err.message)
           } else {
             //Remove all xmlns data
             removeAllXmlNameSpaceData(result)
 
             copyOfResponseBodyObject = JSON.parse(JSON.stringify(result))
-            console.log("xtest: XML CONVERTED TO JSON OBJECT: " + JSON.stringify(copyOfResponseBodyObject, null, 2))
+
+            logInfo("xtest: xml converted to json: " + JSON.stringify(copyOfResponseBodyObject, null, 2))
           }
-       })
+        })
+      } else if ( /^text\/(.*)plain/.test(contentType) ) {
+        //plaintext
+        copyOfResponseBodyObject = {}
+        copyOfResponseBodyObject['plaintext'] = responseBodyAsString
+  
+        logInfo("xtest: plaintext converted to json: " + JSON.stringify(copyOfResponseBodyObject, null, 2))
+      } else {
+        internalFail("ERROR xtest unsupported contentType: " + contentType)
       }
     } else {
+      //responseBodyAsString is empty
       copyOfResponseBodyObject = {}
     }
   }
@@ -437,13 +452,12 @@ function xtest() {
   //////////////////////////////////////////////////////////////////////////////
   this.expectResponseBodyToHaveUnorderedArray = function expectResponseBodyToHaveUnorderedArray(jsonPathToArray, validationList) {
     var assertionDescriptionPrefix = "RESPONSE BODY (UNORDERED ARRAY)"
-    var copyOfUnorderedArrayToValidate = getObjectValueByPath(copyOfResponseBodyObject, jsonPathToArray)
+    var copyOfUnorderedArrayToValidate = JSON.parse(JSON.stringify(getObjectValueByPath(copyOfResponseBodyObject, jsonPathToArray), null, 0))
     var actualValue = undefined
     var pathToProperty = ''
     var expectedValue = undefined
     var specialHandling = undefined
     var jsonPathToProperty = ''
-    var testDescription = ''
     var testDescriptionExpectedValue = ''
     var testDescriptionSpecialHandling = ''
     var testResult = {}
@@ -555,7 +569,9 @@ function xtest() {
               }
             } else {
               if (actualValue !== undefined) {
+                
                 testResult = testExpectedValueWithActualValue(expectedValue, actualValue, specialHandling, jsonPathToProperty)
+                
                 if (testResult['passed'] === true) {
                   matchFound = true
                 } else {
@@ -776,7 +792,6 @@ function xtest() {
   //////////////////////////////////////////////////////////////////////////////
   this.endXTest = function endXTest() {
     var assertionDescriptionPrefix = 'STRICT RESPONSE VALIDATION'
-    var testDescription = ''
 
     if (strictValidationEnabled === true) {
       //Clean object
@@ -824,9 +839,44 @@ function xtest() {
   //////////////////////////////////////////////////////////////////////////////
   //
   //////////////////////////////////////////////////////////////////////////////
+  function getVersion() {
+    return version
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  //////////////////////////////////////////////////////////////////////////////
+  function logInfo(data) {
+
+    console.info(data)
+  }
+
+
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  //////////////////////////////////////////////////////////////////////////////
+  function logWarn(data) {
+
+    console.warn(data)
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  //////////////////////////////////////////////////////////////////////////////
+  function logError(data) {
+
+    console.error(data)
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  //////////////////////////////////////////////////////////////////////////////
   function assertionPass(assertionDescriptionPrefix, assertionDescriptionSuffix) {
 
-    tests[assertionDescriptionPrefix + " - RESULT PASS: " + assertionDescriptionSuffix] = 1
+    pm.test(assertionDescriptionPrefix + " - RESULT PASS: " + assertionDescriptionSuffix, function () {
+      pm.expect(true).to.equal(true)
+    })
   }
 
 
@@ -835,7 +885,19 @@ function xtest() {
   //////////////////////////////////////////////////////////////////////////////
   function assertionFail(assertionDescriptionPrefix, assertionDescriptionSuffix) {
 
-    tests[assertionDescriptionPrefix + " - RESULT FAIL: " + assertionDescriptionSuffix] = 0
+    pm.test(assertionDescriptionPrefix + " - RESULT FAIL: " + assertionDescriptionSuffix, function () {
+      pm.expect.fail("xtest assertion failed!")
+    })
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
+  //
+  //////////////////////////////////////////////////////////////////////////////
+  function internalFail(failureMessage) {
+
+    pm.test("XTEST INTERNAL FAILURE: " + failureMessage, function () {
+      pm.expect.fail("xtest internal failure.")
+    })
   }
 
 
@@ -906,12 +968,74 @@ function xtest() {
         if (expectedValueAsDateString === actualValueAsDateString) {
           //PASS: expectedValue matched actualValue
           testResult['passed'] = true
-          testResult['description'] = "Property '" + jsonPathToProperty + "' with expectedValueAsDateString '" + expectedValueAsDateString + "' matched actualValueAsDateString (converted from epoch format) '" + actualValueAsDateString + "'."
+          testResult['description'] = "dateAsEpoch: Property '" + jsonPathToProperty + "' with expectedValueAsDateString '" + expectedValueAsDateString + "' matched actualValueAsDateString (converted from epoch format) '" + actualValueAsDateString + "'."
           return testResult
         } else {
           //FAIL: expectedValue did not match actualValue
           testResult['passed'] = false
-          testResult['description'] = "Property '" + jsonPathToProperty + "' with expectedValueAsDateString '" + expectedValueAsDateString + "' did NOT match actualValueAsDateString (converted from epoch format) '" + actualValueAsDateString + "'."
+          testResult['description'] = "dateAsEpoch: Property '" + jsonPathToProperty + "' with expectedValueAsDateString '" + expectedValueAsDateString + "' did NOT match actualValueAsDateString (converted from epoch format) '" + actualValueAsDateString + "'."
+          return testResult
+        }
+      } else if (specialHandling === 'dateWithin1Sec') {
+        const expectedDate = Date.parse(expectedValue)
+        const actualDate = Date.parse(actualValue)
+
+        const actualDatePlus1Second = (actualDate + 1000)
+        const actualDateMinus1Second = (actualDate - 1000)
+
+        if ( (expectedDate >= actualDateMinus1Second) && (expectedDate <= actualDatePlus1Second) ) {
+          //PASS: expectedValue falls within actualValue +- 1 second
+          testResult['passed'] = true
+          testResult['description'] = "dateWithin1Sec: Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' successfully fell within actualValue +- 1 second '" + actualValue + "'."
+          return testResult
+        } else {
+          //FAIL: expectedValue did not fall within actualValue +- 1 second
+          testResult['passed'] = false
+          testResult['description'] = "dateWithin1Sec: Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' did NOT fall within actualValue +- 1 second '" + actualValue + "'."
+          return testResult
+        }
+      } else if (specialHandling === 'isArrayAndEmpty') {
+        //expectedValue is not needed for this assertion check - ignore it
+
+        //Check that the type of actualValue is an array
+        if (actualValue.constructor === Array) {
+          if (actualValue.length === 0) {
+            //PASS: expectedValue falls within actualValue +- 1 second
+            testResult['passed'] = true
+            testResult['description'] = "isArrayAndEmpty: Property '" + jsonPathToProperty + "' is an Array and is empty."
+            return testResult
+          } else {
+            //FAIL: actualValue is not an empty array
+            testResult['passed'] = false
+            testResult['description'] = "isArrayAndEmpty: Property '" + jsonPathToProperty + "' is an Array but is NOT empty, it contains '" + actualValue.length + "' items."
+            return testResult
+          }
+        } else {
+          //FAIL: actualValue is not an array
+          testResult['passed'] = false
+          testResult['description'] = "isArrayAndEmpty: Property '" + jsonPathToProperty + "' is NOT an Array '" + actualValue + "'."
+          return testResult
+        }
+      } else if (specialHandling === 'isArrayAndNotEmpty') {
+        //expectedValue is not needed for this assertion check - ignore it
+
+        //Check that the type of actualValue is an array
+        if (actualValue.constructor === Array) {
+          if (actualValue.length === 0) {
+            //FAIL: actualValue is an empty array
+            testResult['passed'] = false
+            testResult['description'] = "isArrayAndNotEmpty: Property '" + jsonPathToProperty + "' is an Array but is empty."
+            return testResult
+          } else {
+            //PASS: expectedValue falls within actualValue +- 1 second
+            testResult['passed'] = true
+            testResult['description'] = "isArrayAndNotEmpty: Property '" + jsonPathToProperty + "' is an Array and is NOT empty, it contains '" + actualValue.length + "' items."
+            return testResult
+          }
+        } else {
+          //FAIL: actualValue is not an array
+          testResult['passed'] = false
+          testResult['description'] = "isArrayAndNotEmpty: Property '" + jsonPathToProperty + "' is NOT an Array '" + actualValue + "'."
           return testResult
         }
       } else if (specialHandling === 'setAsEnvironmentVariable') {
@@ -921,7 +1045,7 @@ function xtest() {
         pm.environment.set(environmentVariableKey, environmentVariableValue)
 
         testResult['passed'] = true
-        testResult['description'] = "Property '" + jsonPathToProperty + "' was set as an environment variable with key '" + environmentVariableKey + "' and value '" + environmentVariableValue + "'."
+        testResult['description'] = "setAsEnvironmentVariable: Property '" + jsonPathToProperty + "' was set as an environment variable with key '" + environmentVariableKey + "' and value '" + environmentVariableValue + "'."
         return testResult
       } else if (specialHandling === 'setAsCollectionVariable') {
         collectionVariableKey = expectedValue
@@ -930,18 +1054,18 @@ function xtest() {
         pm.collectionVariables.set(collectionVariableKey, collectionVariableValue)
 
         testResult['passed'] = true
-        testResult['description'] = "Property '" + jsonPathToProperty + "' was set as a variable with collectionVariableKey '" + collectionVariableKey + "' and collectionVariableValue '" + collectionVariableValue + "'."
+        testResult['description'] = "setAsCollectionVariable: Property '" + jsonPathToProperty + "' was set as a variable with collectionVariableKey '" + collectionVariableKey + "' and collectionVariableValue '" + collectionVariableValue + "'."
         return testResult
       } else if (specialHandling === 'notThisExpectedValue') {
         if (regExpTrue === true) {
           //Compare using RegExp
           if (expectedValue.test(actualValue) !== true) {
             testResult['passed'] = true
-            testResult['description'] = "Property '" + jsonPathToProperty + "' with RegExp expectedValue '" + expectedValue + "' CORRECTLY did NOT match actualValue '" + actualValue + "'."
+            testResult['description'] = "notThisExpectedValue: Property '" + jsonPathToProperty + "' with RegExp expectedValue '" + expectedValue + "' CORRECTLY did NOT match actualValue '" + actualValue + "'."
             return testResult
           } else {
             testResult['passed'] = false
-            testResult['description'] = "Property '" + jsonPathToProperty + "' with RegExp expectedValue '" + expectedValue + "' INCORRECTLY DID match actualValue '" + actualValue + "'."
+            testResult['description'] = "notThisExpectedValue: Property '" + jsonPathToProperty + "' with RegExp expectedValue '" + expectedValue + "' INCORRECTLY DID match actualValue '" + actualValue + "'."
             return testResult
           }
         } else {

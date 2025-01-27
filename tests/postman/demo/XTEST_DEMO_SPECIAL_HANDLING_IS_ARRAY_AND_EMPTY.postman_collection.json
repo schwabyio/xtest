@@ -1,0 +1,195 @@
+{
+	"info": {
+		"_postman_id": "b7b36985-6142-41c5-b826-7a1eb9bd44a1",
+		"name": "XTEST_DEMO_SPECIAL_HANDLING_IS_ARRAY_AND_EMPTY",
+		"description": "Objective: Validate special handling `isArrayAndEmpty`.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28098991"
+	},
+	"item": [
+		{
+			"name": "Validate response body property with isArrayAndEmpty (with strict validation)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Load xtest",
+							"var xtest = eval(pm.globals.get(\"xtest\"));",
+							"",
+							"//Start testing using xtest",
+							"startXTest(pm, pm.globals.get(\"useStrictValidation\"));",
+							"",
+							"//Validate response body",
+							"expectResponseBodyToHaveProperty(\"emptyArray\", null, \"isArrayAndEmpty\");",
+							"",
+							"//End testing using xtest",
+							"endXTest();"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://xtest-demo.httpsim.schwaby.io/isArrayAndEmptyProperty",
+					"protocol": "https",
+					"host": [
+						"xtest-demo",
+						"httpsim",
+						"schwaby",
+						"io"
+					],
+					"path": [
+						"isArrayAndEmptyProperty"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate response body property with isArrayAndEmpty (without strict validation)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Load xtest",
+							"var xtest = eval(pm.globals.get(\"xtest\"));",
+							"",
+							"//Start testing using xtest",
+							"startXTest(pm, false);",
+							"",
+							"//Validate response body",
+							"expectResponseBodyToHaveProperty(\"emptyArray\", null, \"isArrayAndEmpty\");",
+							"",
+							"//End testing using xtest",
+							"endXTest();"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://xtest-demo.httpsim.schwaby.io/isArrayAndEmptyProperty",
+					"protocol": "https",
+					"host": [
+						"xtest-demo",
+						"httpsim",
+						"schwaby",
+						"io"
+					],
+					"path": [
+						"isArrayAndEmptyProperty"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate a response body with an unordered array of objects with sArrayAndEmpty (without strict validation)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Load xtest",
+							"var xtest = eval(pm.globals.get(\"xtest\"));",
+							"",
+							"//Start testing using xtest",
+							"startXTest(pm, false);",
+							"",
+							"//Validate response body",
+							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
+							"  {pathToProperty: \"id.value\", expectedValue: \"account-1\"},",
+							"  {pathToProperty: \"subAccounts\", expectedValue: null, specialHandling: \"isArrayAndEmpty\"}",
+							"]);",
+							"",
+							"//End testing using xtest",
+							"endXTest();"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://xtest-demo.httpsim.schwaby.io/isArrayAndEmptyArrayOfObjects",
+					"protocol": "https",
+					"host": [
+						"xtest-demo",
+						"httpsim",
+						"schwaby",
+						"io"
+					],
+					"path": [
+						"isArrayAndEmptyArrayOfObjects"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

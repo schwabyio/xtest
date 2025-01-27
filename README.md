@@ -4,30 +4,36 @@
 
 ## Table of Contents
 - [Overview](#overview)
-- [Supported Content Types](#supported-content-types)
+  - [Strict Validation Support](#strict-validation-support)
+  - [Supported Content Types](#supported-content-types)
 - [How To Install xtest Within Postman Desktop App](#how-to-install-xtest-within-postman-desktop-app)
-- [Available Functions](#available-functions)
-  1. [startXTest()](#startXTest)
-  2. [expectResponseStatusCodeToBe()](#expectResponseStatusCodeToBe)
-  3. [expectResponseToHaveHeader()](#expectResponseToHaveHeader)
-  4. [expectResponseBodyToHaveProperty()](#expectResponseBodyToHaveProperty)
-  5. [expectResponseBodyToHaveUnorderedArray()](#expectResponseBodyToHaveUnorderedArray)
-  6. [endXTest()](#endXTest)
-  7. [date()](#date)
-- [XML Support](#xml-support)
-
-<br>
+- [Demo With Live Working Examples](#demo-with-live-working-examples)
+- [Format of xtest Postman Test](#format-of-xtest-postman-test)
+  - [Sections](#sections)
+- [xtest Assertion Functions](#xtest-assertion-functions)
+  1. [expectResponseStatusCodeToBe()](#expectResponseStatusCodeToBe)
+  2. [expectResponseToHaveHeader()](#expectResponseToHaveHeader)
+  3. [expectResponseBodyToHaveProperty()](#expectResponseBodyToHaveProperty)
+  4. [expectResponseBodyToHaveUnorderedArray()](#expectResponseBodyToHaveUnorderedArray)
+  - [Special Handling](#special-handling)
+- [Helper Functions](#helper-functions)
+  1. [date()](#date)
 
 # xtest - Postman Extended Test
 
 ## Overview
-Postman extended test (xtest) is a module that is used within [Postman](https://www.postman.com/downloads/)/[xRunner](https://github.com/schwabyio/xrunner) to test your APIs with speed, simplicity, and at scale. **There is no need to write any code**; just use the simple, yet powerful, functions provided. And as a bonus, your team/organization will be able to quickly and effortlessly understand tests across all projects, no matter who creates them.
+Postman extended test (xtest) is a module that is used within [Postman](https://www.postman.com/downloads/)/[xrun](https://github.com/schwabyio/xrun) to test your APIs with speed, simplicity, and at scale. **There is no need to write any code**; just use the simple, yet powerful, functions provided. And as a bonus, your team will be able to quickly and effortlessly understand tests across all projects, no matter who creates them.
 
-<br>
+### Strict Validation Support
+A key feature of xtest is the idea of strict validation. When strict validation is enabled on a test it requires every response body property to be asserted on otherwise the test will fail. Use this for your mission critical APIs to provide even greater confidence in your API release cycle.
 
-## Supported Content Types
-* JSON
-* XML (internally converted to JSON)
+
+### Supported Content Types
+| Name         | HTTP Content-Type     | Note                                                             | Live Example Demo               |
+|--------------|-----------------------|------------------------------------------------------------------|---------------------------------|
+| JSON         | application/json      |                                                                  | [See here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_PROPERTY_VALUE.postman_collection.json)                    |
+| XML          | application/xml       | Internally xml is converted to json object using xml2js.         | [See here](./tests/postman/demo/XTEST_DEMO_PLAIN_TEXT.postman_collection.json)                    |
+| Plain Text   | text/plain            | Internally plain text is set to json `plaintext` property.       | [See here](./tests/postman/demo/XTEST_DEMO_XML1.postman_collection.json)                    |
 
 <br>
 
@@ -36,57 +42,48 @@ Open your Postman App and create the following two global variables (Postman App
 1. VARIABLE name of ```useStrictValidation``` with a CURRENT VALUE of ```true```.
 2. VARIABLE name of ```xtest``` with a CURRENT VALUE using the latest xtest minified code (click the "Copy source to clipboard" button) located here: https://github.com/schwabyio/xtest/blob/master/xtest.min.js
 
-<br>
-
-If you still need help, check out this video:
-
-
-
-https://user-images.githubusercontent.com/118861343/214447365-577cf802-2c28-4632-8964-5fca068d128f.mp4
-
-
+* NOTE: If you still need help, [check out this video](https://user-images.githubusercontent.com/118861343/214447365-577cf802-2c28-4632-8964-5fca068d128f.mp4)
 
 <br>
 
-That's it! You are now ready to use any of the documented functions below.
+## Demo With Live Working Examples
 
-NOTE: You can use the ```Run in Postman``` button located under each function to import an example one at a time OR you can import all of the examples in bulk from here: https://github.com/schwabyio/xtest/tree/main/tests/postman/demo
-
-<br>
-
-## Available Functions
+There are a number of live working examples of each supported xtest function below that can be imported into your Postman Desktop app - [take a look and import them here!](./tests/postman/demo)
 
 <br>
 
-<div id='startXTest'/>
-
-# startXTest()
-
-This function is used once at the beginning of each test to initialize xtest.
-<details>
-  <summary>Click for details.</summary>
-
+## Format of xtest Postman Test
+All xtest assertions are done within the Postman `Scripts -> Post-response` section. The format will always have the following 4 sections:
 ```js
-startXTest(pm, pm.globals.get("useStrictValidation"));
+//1. Load xtest
+var xtest = eval(pm.globals.get("xtest"));
+
+//2. Start testing using xtest
+startXTest(pm [Postman Object], useStrictValidation [Boolean]);
+
+//////////////////////////////////////////////////////////////
+//3. Set one or more xtest assertion functions in this section
+//////////////////////////////////////////////////////////////
+
+//4. End testing using xtest
+endXTest();
 ```
-or hardcode ```useStrictValidation``` to false
-```js
-startXTest(pm, false);
-```
+### Sections
+1. `Load xtest` - Always set exactly as is.
+    * `var xtest = eval(pm.globals.get("xtest"));`
+2. `Start testing using xtest`
+    * `startXTest(pm [Postman Object], useStrictValidation [Boolean]);`
+      * Always set 1st parameter with `pm` (Postman Object).
+      * 2nd parameter is the `useStrictValidation` of type `Boolean`. Hard-code to `false` if you don't want to use strict validation in test. Otherwise, you can hard-code to `true`, but it's **instead reccomended to use the global variable `pm.globals.get("useStrictValidation")` to control**.
+3. `Set one or more xtest assertion functions in this section`
+4. `End testing using xtest` - Always set exactly as is (no parameters).
+    * `endXTest();`
 
-```
-Inputs:
-pm: [Object] - postman object.
+<br>
 
-useStrictValidation: [Boolean] - When useStrictValidation is set to true, you will need an assertion for every response body property. If any response body properties do not contain an assertion the test will fail notifying there are response properties that are not validated. Hardcode useStrictValidation to false if you do not want to validate all response body properties for a particular test.
+## xtest Assertion Functions
 
-Output:
-undefined
-```
-
-</details>
-<br><br>
-
+<br>
 
 <div id='expectResponseStatusCodeToBe'/>
 
@@ -102,10 +99,12 @@ Validate response status code as number.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseStatusCodeToBe(expectedValue);
 ```
 
+Function Details:
 ```
 Inputs:
 expectedValue: [Number] - set with the expected response status code value (e.g. 200).
@@ -114,10 +113,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseStatusCodeToBe(200);
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-ffe6a29c-ba8b-4443-bbc0-a11b57eebcb6?action=collection%2Ffork&collection-url=entityId%3D24782047-ffe6a29c-ba8b-4443-bbc0-a11b57eebcb6%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_STATUS_CODE_TO_BE_NUMBER.postman_collection.json).
 
 </details>
 <br><br>
@@ -129,10 +130,12 @@ Validate response status code is NOT a given number.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseStatusCodeToBe(expectedValue, "notThisExpectedValue");
 ```
 
+Function Details:
 ```
 Inputs:
 expectedValue: [Number] - set with the expected response status code value (e.g. 200).
@@ -143,10 +146,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseStatusCodeToBe(200, "notThisExpectedValue");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-dd6d0de0-ab70-4595-bccc-70da75555ec6?action=collection%2Ffork&collection-url=entityId%3D24782047-dd6d0de0-ab70-4595-bccc-70da75555ec6%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_STATUS_CODE_TO_NOT_BE_THIS_NUMBER.postman_collection.json).
 
 </details>
 <br><br>
@@ -158,10 +163,12 @@ Validate response status code as regular expression.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseStatusCodeToBe(expectedValue);
 ```
 
+Function Details:
 ```
 Inputs:
 expectedValue: [RegExp] - set with a regular expression to test against the expected response status code (e.g. /^2/).
@@ -170,10 +177,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseStatusCodeToBe(/^2/);
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-e44010e6-ce19-4eb5-9b00-2aa5c24eda99?action=collection%2Ffork&collection-url=entityId%3D24782047-e44010e6-ce19-4eb5-9b00-2aa5c24eda99%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_STATUS_CODE_TO_BE_REGEXP.postman_collection.json).
 
 </details>
 <br><br>
@@ -186,10 +195,12 @@ Validate response status code is NOT a given regular expression.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
-expectResponseStatusCodeToBe(expectedValue);
+expectResponseStatusCodeToBe(expectedValue, "notThisExpectedValue");
 ```
 
+Function Details:
 ```
 Inputs:
 expectedValue: [RegExp] - set with a regular expression to test against the expected response status code (e.g. /^2/).
@@ -200,10 +211,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseStatusCodeToBe(/^4/, "notThisExpectedValue");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-05f577cf-a05d-48e3-9d97-c5fbb67c4c0e?action=collection%2Ffork&collection-url=entityId%3D24782047-05f577cf-a05d-48e3-9d97-c5fbb67c4c0e%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_STATUS_CODE_TO_NOT_BE_THIS_REGEXP.postman_collection.json).
 
 </details>
 <br><br>
@@ -215,10 +228,12 @@ Set the response status code as an collection variable.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseStatusCodeToBe(collectionVariableKey, "setAsCollectionVariable");
 ```
 
+Function Details:
 ```
 Inputs:
 collectionVariableKey: [String] - set with any arbitrary collection variable key you want to use.
@@ -229,10 +244,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseStatusCodeToBe("responseCodeKey", "setAsCollectionVariable");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-eb7f36f3-9a37-48c1-9912-75757863def2?action=collection%2Ffork&collection-url=entityId%3D24782047-eb7f36f3-9a37-48c1-9912-75757863def2%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_STATUS_CODE_SPECIAL_HANDLING_SET_AS_COLLECTION_VARIABLE.postman_collection.json).
 
 </details>
 <br><br>
@@ -252,10 +269,12 @@ Validate response header key exists. Ignore response header value.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseToHaveHeader(expectedHeaderKey);
 ```
 
+Function Details:
 ```
 Inputs:
 expectedHeaderKey: [String] - set with the expected response header key (case insensitive).
@@ -264,10 +283,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseToHaveHeader("custom-header");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-54d22ee9-8938-4c3d-866d-ad783545d6fd?action=collection%2Ffork&collection-url=entityId%3D24782047-54d22ee9-8938-4c3d-866d-ad783545d6fd%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_TO_HAVE_HEADER_IGNORE_VALUE.postman_collection.json).
 
 </details>
 <br><br>
@@ -279,10 +300,12 @@ Validate a response header key does NOT exist.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseToHaveHeader(expectedHeaderKey, null, "notThisExpectedKey");
 ```
 
+Function Details:
 ```
 Inputs:
 expectedHeaderKey: [String] - set with the expected response header key (case insensitive).
@@ -295,10 +318,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseToHaveHeader("some-header", null, "notThisExpectedKey");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-e5c7f24e-4ffc-4d09-81ad-c580a14fda56?action=collection%2Ffork&collection-url=entityId%3D24782047-e5c7f24e-4ffc-4d09-81ad-c580a14fda56%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_TO_NOT_HAVE_HEADER.postman_collection.json).
 
 </details>
 <br><br>
@@ -310,10 +335,12 @@ Validate response header key and header value as strings.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseToHaveHeader(expectedHeaderKey, expectedHeaderValue);
 ```
 
+Function Details:
 ```
 Inputs:
 expectedHeaderKey: [String] - set with the expected response header key (case insensitive).
@@ -324,10 +351,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseToHaveHeader("custom-header", "This is the custom header value");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-8d017b5d-4681-47ac-84bd-8c043fb4676c?action=collection%2Ffork&collection-url=entityId%3D24782047-8d017b5d-4681-47ac-84bd-8c043fb4676c%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_TO_HAVE_HEADER_STRING_VALUE.postman_collection.json).
 
 </details>
 <br><br>
@@ -339,10 +368,12 @@ Validate for a given response header key that the header value does NOT match.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseToHaveHeader(expectedHeaderKey, expectedHeaderValue, "notThisExpectedValue");
 ```
 
+Function Details:
 ```
 Inputs:
 expectedHeaderKey: [String] - set with the expected response header key (case insensitive).
@@ -355,10 +386,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseToHaveHeader("custom-header", "Not this value", "notThisExpectedValue");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-eea3a589-d93f-4609-a9c6-6a195c2736e7?action=collection%2Ffork&collection-url=entityId%3D24782047-eea3a589-d93f-4609-a9c6-6a195c2736e7%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_TO_NOT_HAVE_HEADER_STRING_VALUE.postman_collection.json).
 
 </details>
 <br><br>
@@ -370,10 +403,12 @@ Validate response header key as string. Validate response header value as regula
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseToHaveHeader(expectedHeaderKey, expectedHeaderValue);
 ```
 
+Function Details:
 ```
 Inputs:
 expectedHeaderKey: [String] - set with the expected response header key (case insensitive).
@@ -384,10 +419,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseToHaveHeader("custom-header", /the CUSTOM hEadEr VAL/i);
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-3074a454-d810-4fe9-a6d7-bfa4f4fc0a99?action=collection%2Ffork&collection-url=entityId%3D24782047-3074a454-d810-4fe9-a6d7-bfa4f4fc0a99%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_TO_HAVE_HEADER_REGEXP_VALUE.postman_collection.json).
 
 </details>
 <br><br>
@@ -399,10 +436,12 @@ Validate response header key as string. Validate response header value does NOT 
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseToHaveHeader(expectedHeaderKey, expectedHeaderValue, "notThisExpectedValue);
 ```
 
+Function Details:
 ```
 Inputs:
 expectedHeaderKey: [String] - set with the expected response header key (case insensitive).
@@ -415,10 +454,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseToHaveHeader("custom-header", /the CUSTOM hEadEr VAL/, "notThisExpectedValue");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-6d8ec1f6-a7ec-4716-839a-9b0862af2ced?action=collection%2Ffork&collection-url=entityId%3D24782047-6d8ec1f6-a7ec-4716-839a-9b0862af2ced%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_TO_NOT_HAVE_HEADER_REGEXP_VALUE.postman_collection.json).
 
 </details>
 <br><br>
@@ -430,10 +471,12 @@ Set a response header value as an collection variable.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseToHaveHeader(expectedHeaderKey, collectionVariableKey, "setAsCollectionVariable");
 ```
 
+Function Details:
 ```
 Inputs:
 expectedHeaderKey: [String] - set with the expected response header key (case insensitive).
@@ -446,10 +489,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseToHaveHeader("custom-header", "custom-header-col-var-key", "setAsCollectionVariable");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-8efd6c98-4b13-4de9-9da3-fa2d9f7824b7?action=collection%2Ffork&collection-url=entityId%3D24782047-8efd6c98-4b13-4de9-9da3-fa2d9f7824b7%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_HEADER_SPECIAL_HANDLING_SET_AS_COLLECTION_VARIABLE.postman_collection.json).
 
 </details>
 <br><br>
@@ -470,10 +515,12 @@ Validate property exists. Ignore property value.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveProperty(jsonPath);
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPath: [String] - set with the expected json path (e.g. "balance.currentBalance.amount").
@@ -482,10 +529,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveProperty("id.value");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-c3973801-d149-4f35-b290-e526873d5852?action=collection%2Ffork&collection-url=entityId%3D24782047-c3973801-d149-4f35-b290-e526873d5852%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_PROPERTY_IGNORE_VALUE.postman_collection.json).
 
 </details>
 <br><br>
@@ -497,10 +546,12 @@ Validate response body property does NOT exist (In this context, notThisExpected
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveProperty(jsonPath, null, "notThisExpectedKey");
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPath: [String] - set with the expected json path (e.g. "balance.currentBalance.amount").
@@ -513,10 +564,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveProperty("id.notValid", null, "notThisExpectedKey");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-3a10308c-b03a-4fa9-ac8b-8c461892c2e8?action=collection%2Ffork&collection-url=entityId%3D24782047-3a10308c-b03a-4fa9-ac8b-8c461892c2e8%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_NOT_HAVE_RESPONSE_PROPERTY.postman_collection.json).
 
 </details>
 <br><br>
@@ -528,10 +581,12 @@ Validate response body property exists with expected value and expected data typ
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveProperty(jsonPath, expectedValue);
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPath: [String] - set with the expected json path (e.g. "balance.currentBalance.amount").
@@ -542,10 +597,15 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveProperty("string.value", "rl3FShupSKpo8tpe07JHKOk1rRrcrvEmtaUMKJfR3hM");
+expectResponseBodyToHaveProperty("boolean.value", true);
+expectResponseBodyToHaveProperty("number.value", 12345);
+expectResponseBodyToHaveProperty("null.value", null);
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-a379078a-6534-4dcf-9901-a7e813b461eb?action=collection%2Ffork&collection-url=entityId%3D24782047-a379078a-6534-4dcf-9901-a7e813b461eb%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_PROPERTY_VALUE.postman_collection.json).
 
 </details>
 <br><br>
@@ -557,10 +617,12 @@ Validate response body property exists but NOT with a given value.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveProperty(jsonPath, expectedValue, "notThisExpectedValue");
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPath: [String] - set with the expected json path (e.g. "balance.currentBalance.amount").
@@ -573,10 +635,15 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveProperty("string.value", "XXXX", "notThisExpectedValue");
+expectResponseBodyToHaveProperty("boolean.value", false, "notThisExpectedValue");
+expectResponseBodyToHaveProperty("number.value", "12345", "notThisExpectedValue");
+expectResponseBodyToHaveProperty("null.value", undefined, "notThisExpectedValue");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-ac989273-da1e-44ce-a128-7ffeab851372?action=collection%2Ffork&collection-url=entityId%3D24782047-ac989273-da1e-44ce-a128-7ffeab851372%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_PROPERTY_BUT_NOT_WITH_GIVEN_VALUE.postman_collection.json).
 
 </details>
 <br><br>
@@ -588,10 +655,12 @@ Validate response body property exists with value matched against a regular expr
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveProperty(jsonPath, expectedValue);
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPath: [String] - set with the expected json path (e.g. "balance.currentBalance.amount").
@@ -602,10 +671,13 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveProperty("id.value", /^rl3FShupS/);
+expectResponseBodyToHaveProperty("id.value", new RegExp("^rl3FShupS"));
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-2e5b28a4-ac5a-4822-aea1-ddcc1e351601?action=collection%2Ffork&collection-url=entityId%3D24782047-2e5b28a4-ac5a-4822-aea1-ddcc1e351601%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_PROPERTY_REGEXP.postman_collection.json).
 
 </details>
 <br><br>
@@ -617,10 +689,12 @@ Validate response body property exists but does NOT match against a regular expr
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveProperty(jsonPath, expectedValue, "notThisExpectedValue");
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPath: [String] - set with the expected json path (e.g. "balance.currentBalance.amount").
@@ -633,10 +707,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveProperty("id.value", /$rl3FShupS/, "notThisExpectedValue");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-b3a4d3ef-3129-4057-b3aa-b9b6dceaa0ca?action=collection%2Ffork&collection-url=entityId%3D24782047-b3a4d3ef-3129-4057-b3aa-b9b6dceaa0ca%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_PROPERTY_BUT_NOT_WITH_REGEXP_MATCH.postman_collection.json).
 
 </details>
 <br><br>
@@ -648,10 +724,12 @@ Validate response body property exists with expectedValue as +-secondsOffset and
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveProperty(jsonPath, expectedValue, "dateAsEpoch");
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPath: [String] - set with the expected json path (e.g. "nextPaymentDate").
@@ -665,10 +743,16 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveProperty("epoch.date", 0, 'dateAsEpoch');
+expectResponseBodyToHaveProperty("epoch.date", 86400, 'dateAsEpoch');
+expectResponseBodyToHaveProperty("epoch.date", -86400, 'dateAsEpoch');
+expectResponseBodyToHaveProperty("epoch.date", 604800, 'dateAsEpoch');
+expectResponseBodyToHaveProperty("epoch.date", -604800, 'dateAsEpoch');
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-aec67abe-44ac-474b-a9df-bfb15808b802?action=collection%2Ffork&collection-url=entityId%3D24782047-aec67abe-44ac-474b-a9df-bfb15808b802%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_PROPERTY_VALUE_NUMBER_DATE_AS_EPOCH.postman_collection.json).
 
 </details>
 <br><br>
@@ -680,10 +764,12 @@ Validate response body property exists with expectedValue in string format "YYYY
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveProperty(jsonPath, expectedValue, "dateAsEpoch");
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPath: [String] - set with the expected json path (e.g. "nextPaymentDate").
@@ -696,10 +782,13 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveProperty("epoch.date", "2020-10-31", 'dateAsEpoch');
+expectResponseBodyToHaveProperty("epoch.date", "2020-10-31-07:00", 'dateAsEpoch');
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-d96f8a86-8af2-4349-bd60-7997b0cfe74e?action=collection%2Ffork&collection-url=entityId%3D24782047-d96f8a86-8af2-4349-bd60-7997b0cfe74e%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_PROPERTY_VALUE_STRING_DATE_AS_EPOCH.postman_collection.json).
 
 </details>
 <br><br>
@@ -711,10 +800,12 @@ Set a response body property as an collection variable.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveProperty(jsonPath, collectionVariableKey, "setAsCollectionVariable");
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPath: [String] - set with the expected json path.
@@ -727,10 +818,12 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveProperty("string.value", "stringValue", "setAsCollectionVariable");
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-48160916-02f6-4400-b0c9-d4a9b60dd32b?action=collection%2Ffork&collection-url=entityId%3D24782047-48160916-02f6-4400-b0c9-d4a9b60dd32b%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_RESPONSE_PROPERTY_SPECIAL_HANDLING_SET_AS_COLLECTION_VARIABLE.postman_collection.json).
 
 </details>
 <br><br>
@@ -751,10 +844,12 @@ Validate a response body with an unordered array that is of simple type (i.e. si
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveUnorderedArray(jsonPathToArray, validationList);
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPathToArray: [String] - set with the json path to the unordered array (e.g. "items.numeric").
@@ -765,10 +860,31 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
+Example:
+```js
+expectResponseBodyToHaveUnorderedArray("items.alpha", [
+    "d",
+    "f",
+    "b",
+    "e",
+    "a",
+    "c"
+]);
+expectResponseBodyToHaveUnorderedArray("items.numeric", [
+    3,
+    5,
+    9,
+    1,
+    10,
+    6,
+    8,
+    4,
+    7,
+    2
+]);
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-af604e6b-e403-4814-906c-fc5efaa3b71c?action=collection%2Ffork&collection-url=entityId%3D24782047-af604e6b-e403-4814-906c-fc5efaa3b71c%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_UNORDERED_ARRAY_SIMPLE.postman_collection.json).
 
 </details>
 <br><br>
@@ -780,10 +896,12 @@ Validate a response body with an unordered array of objects.
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 expectResponseBodyToHaveUnorderedArray(jsonPathToArray, validationList);
 ```
 
+Function Details:
 ```
 Inputs:
 jsonPathToArray: [String] - set with the json path to the unordered array (e.g. "account").
@@ -799,55 +917,62 @@ Output:
 undefined
 ```
 
-**Try it out in Postman:**
-<br>
-
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-e0f21352-d09e-492f-8005-7e198463fa80?action=collection%2Ffork&collection-url=entityId%3D24782047-e0f21352-d09e-492f-8005-7e198463fa80%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3) Example 1
-
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-c2dfb1bc-beeb-46db-824e-bf61caafadf5?action=collection%2Ffork&collection-url=entityId%3D24782047-c2dfb1bc-beeb-46db-824e-bf61caafadf5%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3) Example 2 (includes specialHandling: "setAsCollectionVariable")
-
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-449c5909-cdcc-49e9-be3c-45f39d51cf44?action=collection%2Ffork&collection-url=entityId%3D24782047-449c5909-cdcc-49e9-be3c-45f39d51cf44%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3) Example 3 (includes specialHandling: "notThisExpectedKey" and "notThisExpectedValue"):
-
-</details>
-<br><br>
-
-
-<div id='endXTest'/>
-
-# endXTest()
-
-This function is used once at the end of each test to finalize xtest.
-<details>
-  <summary>Click for details.</summary>
-
+Example:
 ```js
-endXTest();
+expectResponseBodyToHaveUnorderedArray("account", [
+  {pathToProperty: "id.value", expectedValue: "account-id-KkG", specialHandling: "setAsCollectionVariable"},
+  {pathToProperty: "description", expectedValue: "Checking Account"},
+  {pathToProperty: "displayAccountNumber", expectedValue: "*3221"},
+  {pathToProperty: "accountNumber.hostValue", expectedValue: "7436283221"},
+  {pathToProperty: "category", expectedValue: "DEPOSIT"},
+  {pathToProperty: "accountType", expectedValue: "CHECKING"},
+  {pathToProperty: "balance.currentBalance.amount", expectedValue: 1184.73},
+  {pathToProperty: "balance.availableBalance.amount", expectedValue: 1138.21},
+  {pathToProperty: "asOfDate", expectedValue: -86400, specialHandling: "dateAsEpoch"},
+  {pathToProperty: "accountStatus", expectedValue: "OPEN", specialHandling: undefined}
+]);
 ```
 
-```
-Inputs:
-none
-
-Output:
-undefined
-```
+Live Demo Showing Usage:
+1. [Example 1: specialHandling dateAsEpoch](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_UNORDERED_ARRAY_OF_OBJECTS_1.postman_collection.json).
+2. [Example 2: specialHandling setAsCollectionVariable](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_UNORDERED_ARRAY_OF_OBJECTS_2.postman_collection.json).
+3. [Example 3: specialHandling notThisExpectedKey, notThisExpectedValue](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_UNORDERED_ARRAY_OF_OBJECTS_3.postman_collection.json).
 
 </details>
 <br><br>
 
+
+### Special Handling
+There are a number of special handling options supported in the assertion functions above. This table provides an overview.
+
+|Special Handling Identifier     | Description                                                                              | Supported in expectResponseStatusCodeToBe() | Supported in expectResponseToHaveHeader() | Supported in expectResponseBodyToHaveProperty() | Supported in expectResponseBodyToHaveUnorderedArray() |
+|--------------------------------|------------------------------------------------------------------------------------------|---------------------------------------------|-------------------------------------------|-------------------------------------------------|-------------------------------------------------------|
+|`setAsEnvironmentVariable`      | Set actualValue to a Postman `Environment` type variable.                                | Yes                                         | Yes                                       | Yes                                             | Yes                                                   |
+|`setAsCollectionVariable`       | Set actualValue to a Postman `Collection` type variable.                                 | Yes                                         | Yes                                       | Yes                                             | Yes                                                   |
+|`notThisExpectedKey`            | Assert that property `key` does not exist.                                               | No                                          | Yes                                       | Yes                                             | Yes                                                   |
+|`notThisExpectedValue`          | Assert that property `value` does not exist.                                             | Yes                                         | Yes                                       | Yes                                             | No (TBD)                                              |
+|`dateAsEpoch`                   | Assert that property value is valid epoch formatted date (internally normalized).        | No                                          | No                                        | Yes                                             | Yes                                                   |
+|`dateWithin1Sec`                | Assert that property value is a date/time within +- 1 second tolerance.                  | No                                          | No                                        | Yes                                             | Yes                                                   |
+|`isArrayAndEmpty`               | Assert that property is an Array type and is empty.                                      | No                                          | No                                        | Yes                                             | Yes                                                   |
+|`isArrayAndNotEmpty`            | Assert that property is an Array type and is NOT empty.                                  | No                                          | No                                        | Yes                                             | Yes                                                   |
+
+
+## Helper Functions
 
 <div id='date'/>
 
-# date()
+### date()
 
 This function can be used to dynamically generate a date/time value in any required format. [See here for supported dateFormat specifiers.](https://github.com/samsonjs/strftime/blob/master/Readme.md#supported-specifiers)
 <details>
   <summary>Click for details.</summary>
 
+Function Name and Parameters:
 ```js
 date(dateFormat, secondsOffset, timeZoneScheme);
 ```
 
+Function Details:
 ```
 Inputs:
 dateFormat: [String] - set with the desired date/time format (e.g. "%Y-%m-%d") - see above link for all valid specifiers.
@@ -887,25 +1012,12 @@ Output:
 formatted date [String or Number]
 ```
 
-**Try it out in Postman:**
-<br>
+Example 1: date() return UTC formatted date as of *now* (i.e. no offset):
+```js
+date('%Y-%m-%dT%H:%M:%SZ', 0, Z)
+```
 
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-0c70a9e3-a6bb-49ed-91d9-f72aad624ae7?action=collection%2Ffork&collection-url=entityId%3D24782047-0c70a9e3-a6bb-49ed-91d9-f72aad624ae7%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3)
+Live Demo Showing Usage - [see here](./tests/postman/demo/XTEST_DEMO_DATE.postman_collection.json).
 
 </details>
 <br><br>
-
-
-## XML Support
-XML responses are internally converted into JSON and can be used with any of the xtest functions.
-<details>
-  <summary>Click for examples.</summary>
-
-**Try it out in Postman:**
-<br>
-
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-66e7a6e2-51c0-4689-8887-58553e99705b?action=collection%2Ffork&collection-url=entityId%3D24782047-66e7a6e2-51c0-4689-8887-58553e99705b%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3) XML Response Example 1
-
-[![Run in Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/24782047-75f62bd3-2b30-4af0-a597-f4d4fb7335a5?action=collection%2Ffork&collection-url=entityId%3D24782047-75f62bd3-2b30-4af0-a597-f4d4fb7335a5%26entityType%3Dcollection%26workspaceId%3Dcb109feb-f5d7-4c98-b535-cbb21ddb7db3) XML Response Example 2
-
-</details>

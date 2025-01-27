@@ -1,0 +1,256 @@
+{
+	"info": {
+		"_postman_id": "88766bf4-fb31-4147-8109-c66408974555",
+		"name": "XTEST_DEMO_SPECIAL_HANDLING_DATE_WITHIN_1_SECOND",
+		"description": "Objective: Validate special handling `dateWithin1Sec`.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28098991"
+	},
+	"item": [
+		{
+			"name": "Validate response body property with dateWithin1Sec +500ms",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Load xtest",
+							"var xtest = eval(pm.globals.get(\"xtest\"));",
+							"",
+							"//Start testing using xtest",
+							"startXTest(pm, pm.globals.get(\"useStrictValidation\"));",
+							"",
+							"//Validate response body",
+							"expectResponseBodyToHaveProperty(\"dateUtc.date\", pm.collectionVariables.get(\"nowPlus500ms\"), \"dateWithin1Sec\");",
+							"",
+							"//End testing using xtest",
+							"endXTest();"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://xtest-demo.httpsim.schwaby.io/dateWithin1SecProperty",
+					"protocol": "https",
+					"host": [
+						"xtest-demo",
+						"httpsim",
+						"schwaby",
+						"io"
+					],
+					"path": [
+						"dateWithin1SecProperty"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate response body property with dateWithin1Sec -500ms",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Load xtest",
+							"var xtest = eval(pm.globals.get(\"xtest\"));",
+							"",
+							"//Start testing using xtest",
+							"startXTest(pm, pm.globals.get(\"useStrictValidation\"));",
+							"",
+							"//Validate response body",
+							"expectResponseBodyToHaveProperty(\"dateUtc.date\", pm.collectionVariables.get(\"nowMinus500ms\"), \"dateWithin1Sec\");",
+							"",
+							"//End testing using xtest",
+							"endXTest();"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://xtest-demo.httpsim.schwaby.io/dateWithin1SecProperty",
+					"protocol": "https",
+					"host": [
+						"xtest-demo",
+						"httpsim",
+						"schwaby",
+						"io"
+					],
+					"path": [
+						"dateWithin1SecProperty"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Validate a response body with an unordered array of objects with dateWithin1Sec +-500ms",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Load xtest",
+							"var xtest = eval(pm.globals.get(\"xtest\"));",
+							"",
+							"//Start testing using xtest",
+							"startXTest(pm, pm.globals.get(\"useStrictValidation\"));",
+							"",
+							"//Validate response body",
+							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
+							"  {pathToProperty: \"id.value\", expectedValue: \"KkGHo7-dCNstHv8KT28uNzMZficQcaQwg31wIpM_uwo\"},",
+							"  {pathToProperty: \"description\", expectedValue: \"Checking Account\"},",
+							"  {pathToProperty: \"displayAccountNumber\", expectedValue: \"*3221\"},",
+							"  {pathToProperty: \"accountNumber.hostValue\", expectedValue: \"7436283221\"},",
+							"  {pathToProperty: \"category\", expectedValue: \"DEPOSIT\"},",
+							"  {pathToProperty: \"accountType\", expectedValue: \"CHECKING\"},",
+							"  {pathToProperty: \"balance.currentBalance.amount\", expectedValue: 1184.73},",
+							"  {pathToProperty: \"balance.availableBalance.amount\", expectedValue: 1138.21},",
+							"  {pathToProperty: \"asOfDate\", expectedValue: pm.collectionVariables.get(\"nowPlus500ms\"), specialHandling: \"dateWithin1Sec\"},",
+							"  {pathToProperty: \"accountStatus\", expectedValue: \"OPEN\", specialHandling: undefined}",
+							"]);",
+							"",
+							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
+							"  {pathToProperty: \"id.value\", expectedValue: \"wKg_SyYvyrjEvC0ZqWAE3ROKIr0fPNj8-0-QkMMMgJo\"},",
+							"  {pathToProperty: \"description\", expectedValue: \"Savings Account\"},",
+							"  {pathToProperty: \"displayAccountNumber\", expectedValue: \"*0002\"},",
+							"  {pathToProperty: \"category\", expectedValue: \"DEPOSIT\"},",
+							"  {pathToProperty: \"accountType\", expectedValue: \"SAVINGS\"},",
+							"  {pathToProperty: \"balance.currentBalance.amount\", expectedValue: 10002.73},",
+							"  {pathToProperty: \"balance.availableBalance.amount\", expectedValue: 10001.73},",
+							"  {pathToProperty: \"accountStatus\", expectedValue: \"OPEN\"}",
+							"]);",
+							"",
+							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
+							"  {pathToProperty: \"id.value\", expectedValue: \"blDDAZwefeule19fwjZ1LmytYwqnnn6fs0RHIDGEvxY\"},",
+							"  {pathToProperty: \"description\", expectedValue: \"401K Account\"},",
+							"  {pathToProperty: \"displayAccountNumber\", expectedValue: \"*0024\"},",
+							"  {pathToProperty: \"accountNumber.hostValue\", expectedValue: \"9900000024\"},",
+							"  {pathToProperty: \"category\", expectedValue: \"INVESTMENT\"},",
+							"  {pathToProperty: \"accountType\", expectedValue: \"RETIREMENT_401_K\"},",
+							"  {pathToProperty: \"balance.currentBalance.amount\", expectedValue: 50000},",
+							"  {pathToProperty: \"balance.availableBalance.amount\", expectedValue: 50000},",
+							"  {pathToProperty: \"asOfDate\", expectedValue: pm.collectionVariables.get(\"nowMinus500ms\"), specialHandling: \"dateWithin1Sec\"},",
+							"  {pathToProperty: \"accountStatus\", expectedValue: \"OPEN\", specialHandling: undefined}",
+							"]);",
+							"",
+							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
+							"  {pathToProperty: \"id.value\", expectedValue: \"bXXVt3_SpfyIUNSPFBu0crJGDCRJG388z8iZ9Qlt78Q\"},",
+							"  {pathToProperty: \"description\", expectedValue: \"Certificate of Deposit Account\"},",
+							"  {pathToProperty: \"displayAccountNumber\", expectedValue: \"*0025\"},",
+							"  {pathToProperty: \"accountNumber.hostValue\", expectedValue: \"9900000025\"},",
+							"  {pathToProperty: \"category\", expectedValue: \"INVESTMENT\"},",
+							"  {pathToProperty: \"accountType\", expectedValue: \"CERT_OF_DEPOSIT\"},",
+							"  {pathToProperty: \"balance.currentBalance.amount\", expectedValue: 15000},",
+							"  {pathToProperty: \"balance.availableBalance.amount\", expectedValue: 15000},",
+							"  {pathToProperty: \"asOfDate\", expectedValue: pm.collectionVariables.get(\"nowPlus500ms\"), specialHandling: \"dateWithin1Sec\"},",
+							"  {pathToProperty: \"accountStatus\", expectedValue: \"OPEN\", specialHandling: undefined},",
+							"  {pathToProperty: \"interestRate\", expectedValue:  0.006},",
+							"  {pathToProperty: \"maturityDate\", expectedValue: \"2040-01-30\", specialHandling: \"dateAsEpoch\"},",
+							"]);",
+							"",
+							"//End testing using xtest",
+							"endXTest();"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://xtest-demo.httpsim.schwaby.io/dateWithin1SecArrayOfObjects",
+					"protocol": "https",
+					"host": [
+						"xtest-demo",
+						"httpsim",
+						"schwaby",
+						"io"
+					],
+					"path": [
+						"dateWithin1SecArrayOfObjects"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"//Now +500ms",
+					"const dateNow = new Date();",
+					"const dateNowEpoch = Date.parse(dateNow);",
+					"const dateNowEpochPlus500 = (dateNowEpoch + 500);",
+					"const dateNowPlus500 = new Date(dateNowEpochPlus500);",
+					"const dateNowPlus500UTC = dateNowPlus500.toISOString();",
+					"",
+					"pm.collectionVariables.set(\"nowPlus500ms\", dateNowPlus500UTC);",
+					"",
+					"//Now -500ms",
+					"const dateNowEpochMinus500 = (dateNowEpoch - 500);",
+					"const dateNowMinus500 = new Date(dateNowEpochMinus500);",
+					"const dateNowMinus500UTC = dateNowMinus500.toISOString();",
+					"",
+					"pm.collectionVariables.set(\"nowMinus500ms\", dateNowMinus500UTC);"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "nowPlus500ms",
+			"value": ""
+		},
+		{
+			"key": "nowMinus500ms",
+			"value": ""
+		}
+	]
+}
