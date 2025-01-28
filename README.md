@@ -32,8 +32,8 @@ A key feature of xtest is the idea of strict validation. When strict validation 
 | Name         | HTTP Content-Type     | Note                                                             | Live Example Demo               |
 |--------------|-----------------------|------------------------------------------------------------------|---------------------------------|
 | JSON         | application/json      |                                                                  | [See here](./tests/postman/demo/XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_PROPERTY_VALUE.postman_collection.json)                    |
-| XML          | application/xml       | Internally xml is converted to json object using xml2js.         | [See here](./tests/postman/demo/XTEST_DEMO_PLAIN_TEXT.postman_collection.json)                    |
-| Plain Text   | text/plain            | Internally plain text is set to json `plaintext` property.       | [See here](./tests/postman/demo/XTEST_DEMO_XML1.postman_collection.json)                    |
+| XML          | application/xml       | Internally xml is converted to json object using xml2js.         | [See here](./tests/postman/demo/XTEST_DEMO_XML1.postman_collection.json)                    |
+| Plain Text   | text/plain            | Internally plain text is set to json `plaintext` property.       | [See here](./tests/postman/demo/XTEST_DEMO_PLAIN_TEXT.postman_collection.json)                    |
 
 <br>
 
