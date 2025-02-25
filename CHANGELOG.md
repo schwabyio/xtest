@@ -1,5 +1,8 @@
 # Change Log
 
+## v1.2.1
+1. Don't fail unsupported contentTypes, instead log as warn and move along.
+
 ## v1.2.0
 1. Better response body parsing.
 2. Add support for content-type: `text/plain`.

@@ -10,7 +10,7 @@
 function xtest() {
   'use strict'
   //Global Variables
-  const version = '1.2.0'
+  const version = '1.2.1'
   const xml2js = require('xml2js')
   const _ = require('lodash')
   var strictValidationEnabled = false
@@ -114,7 +114,7 @@ function xtest() {
   
         logInfo("xtest: plaintext converted to json: " + JSON.stringify(copyOfResponseBodyObject, null, 2))
       } else {
-        internalFail("ERROR xtest unsupported contentType: " + contentType)
+        logWarn("WARN xtest unsupported contentType: " + contentType)
       }
     } else {
       //responseBodyAsString is empty
