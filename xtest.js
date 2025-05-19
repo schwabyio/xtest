@@ -10,7 +10,7 @@
 function xtest() {
   'use strict'
   //Global Variables
-  const version = '1.2.1'
+  const version = '1.2.2'
   const xml2js = require('xml2js')
   const _ = require('lodash')
   var strictValidationEnabled = false
@@ -712,8 +712,10 @@ function xtest() {
 
         return newArray
       } else {
+        var joinValue = jsonBasePathToArray === '' ? '' : '.'
+
         //Return joined path (string)
-        var newFullPath = jsonBasePathToArray + '.' + index.toString()
+        var newFullPath = jsonBasePathToArray + joinValue + index.toString()
 
         return newFullPath
       }
@@ -738,11 +740,13 @@ function xtest() {
 
         return newJoinedPathAsArray
       } else {
+        var joinValue = jsonBasePathToArray === '' ? '' : '.'
+
         //If pathToProperty is a string then everything must be a string
         var newJoinedPathAsString = getPathAsString(jsonBasePathToArray)
 
         //Add index
-        newJoinedPathAsString += '.' + index.toString()
+        newJoinedPathAsString += joinValue + index.toString()
 
         //Add pathToProperty
         newJoinedPathAsString += '.' + pathToProperty
