@@ -1,5 +1,9 @@
 # Change Log
 
+## v1.2.2
+1. Fix/add support to expectResponseBodyToHaveUnorderedArray() when jsonPathToArray is
+ empty.
+
 ## v1.2.1
 1. Don't fail unsupported contentTypes, instead log as warn and move along.
 
