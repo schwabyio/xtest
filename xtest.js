@@ -10,7 +10,7 @@
 function xtest() {
   'use strict'
   //Global Variables
-  const version = '1.2.2'
+  const version = '1.3.0'
   const xml2js = require('xml2js')
   const _ = require('lodash')
   var strictValidationEnabled = false
@@ -160,21 +160,21 @@ function xtest() {
       //Compare using RegExp
       validationResult = expectedValue.test(copyOfResponseStatusCode)
 
-      //Special handling: notThisExpectedValue
+      //Special handling:
       if (specialHandling === 'notThisExpectedValue') {
         //Toggle validationResult
         validationResult = (! validationResult)
 
         if (validationResult === true) {
-          assertionPass(assertionDescriptionPrefix, "Response status code with RegExp notThisExpectedValue '" + expectedValue + "' correctly did NOT match the actualValue '" + copyOfResponseStatusCode + "'.")
+          assertionPass(assertionDescriptionPrefix, specialHandling + ": Response status code with RegExp '" + expectedValue + "' correctly did NOT match the actualValue '" + copyOfResponseStatusCode + "'.")
         } else {
-          assertionFail(assertionDescriptionPrefix, "Response status code with RegExp notThisExpectedValue '" + expectedValue + "' INCORRECTLY DID match actualValue '" + copyOfResponseStatusCode + "'.")
+          assertionFail(assertionDescriptionPrefix, specialHandling + ": Response status code with RegExp '" + expectedValue + "' INCORRECTLY DID match actualValue '" + copyOfResponseStatusCode + "'.")
         }
       } else {
         if (validationResult === true) {
-          assertionPass(assertionDescriptionPrefix, "Response status code with RegExp expectedValue '" + expectedValue + "' correctly matched actualValue '" + copyOfResponseStatusCode + "'.")
+          assertionPass(assertionDescriptionPrefix, specialHandling + ": Response status code with RegExp expectedValue '" + expectedValue + "' correctly matched actualValue '" + copyOfResponseStatusCode + "'.")
         } else {
-          assertionFail(assertionDescriptionPrefix, "Response status code with RegExp expectedValue '" + expectedValue + "' INCORRECTLY did NOT match actualValue '" + copyOfResponseStatusCode + "'.")
+          assertionFail(assertionDescriptionPrefix, specialHandling + ": Response status code with RegExp expectedValue '" + expectedValue + "' INCORRECTLY did NOT match actualValue '" + copyOfResponseStatusCode + "'.")
         }
       }
       //Regular validation
@@ -187,15 +187,15 @@ function xtest() {
         validationResult = (! validationResult)
 
         if (validationResult === true) {
-          assertionPass(assertionDescriptionPrefix, "Response status code with notThisExpectedValue '" + expectedValue + "' correctly did NOT match the actualValue '" + copyOfResponseStatusCode + "'.")
+          assertionPass(assertionDescriptionPrefix, specialHandling + ": Response status code with '" + expectedValue + "' correctly did NOT match the actualValue '" + copyOfResponseStatusCode + "'.")
         } else {
-          assertionFail(assertionDescriptionPrefix, "Response status code with notThisExpectedValue '" + expectedValue + "' INCORRECTLY DID match actualValue '" + copyOfResponseStatusCode + "'.")
+          assertionFail(assertionDescriptionPrefix, specialHandling + ": Response status code with '" + expectedValue + "' INCORRECTLY DID match actualValue '" + copyOfResponseStatusCode + "'.")
         }
       } else {
         if (validationResult === true) {
-          assertionPass(assertionDescriptionPrefix, "Response status code with expectedValue '" + expectedValue + "' correctly matched actualValue '" + copyOfResponseStatusCode + "'.")
+          assertionPass(assertionDescriptionPrefix, specialHandling + ": Response status code with expectedValue '" + expectedValue + "' correctly matched actualValue '" + copyOfResponseStatusCode + "'.")
         } else {
-          assertionFail(assertionDescriptionPrefix, "Response status code with expectedValue '" + expectedValue + "' INCORRECTLY did NOT match actualValue '" + copyOfResponseStatusCode + "'.")
+          assertionFail(assertionDescriptionPrefix, specialHandling + ": Response status code with expectedValue '" + expectedValue + "' INCORRECTLY did NOT match actualValue '" + copyOfResponseStatusCode + "'.")
         }
       }
     }
@@ -244,11 +244,9 @@ function xtest() {
           return true
         }
       } else if (specialHandling === 'notThisExpectedValue') {
-        //Special handling validation: notThisExpectedValue
-
         //Match both expectedHeaderKey and expectedHeaderValue (negation will take place below outside of loop)
         if (expectedHeaderKey.toLowerCase() === actualHeaderKey.toLowerCase()) {
-          //Need to store actualHeaderValue for notThisExpectedValue
+          //Need to store actualHeaderValue
           storedActualHeaderValue = actualHeaderValue
 
           if (regExpTrue === true) {
@@ -355,20 +353,19 @@ function xtest() {
         assertionFail(assertionDescriptionPrefix, "The header key with notThisExpectedKey '" + expectedHeaderKey + "' INCORRECTLY DID match a response header key.")
       }
     } else if (specialHandling === 'notThisExpectedValue') {
-      //Special handling validation: notThisExpectedValue
       if (regExpTrue === true) {
         //With regular expression
         if (matchFlag === true) {
-          assertionPass(assertionDescriptionPrefix, "For header key '" + expectedHeaderKey + "', the header value with a RegExp notThisExpectedValue '" + expectedHeaderValue + "' correctly did NOT match the actual header value of '" + storedActualHeaderValue + "'.")
+          assertionPass(assertionDescriptionPrefix, specialHandling + " : For header key '" + expectedHeaderKey + "', the header value with a RegExp '" + expectedHeaderValue + "' correctly did NOT match the actual header value of '" + storedActualHeaderValue + "'.")
         } else {
-          assertionFail(assertionDescriptionPrefix, "For header key '" + expectedHeaderKey + "', the header value with a RegExp notThisExpectedValue '" + expectedHeaderValue + "' INCORRECTLY DID match the actual header value of '" + storedActualHeaderValue + "'.")
+          assertionFail(assertionDescriptionPrefix, specialHandling + ": For header key '" + expectedHeaderKey + "', the header value with a RegExp '" + expectedHeaderValue + "' INCORRECTLY DID match the actual header value of '" + storedActualHeaderValue + "'.")
         }
       } else {
         //Without regular expression
         if (matchFlag === true) {
-          assertionPass(assertionDescriptionPrefix, "For header key '" + expectedHeaderKey + "', the header value with notThisExpectedValue '" + expectedHeaderValue + "' correctly did NOT match the actual header value of '" + storedActualHeaderValue + "'.")
+          assertionPass(assertionDescriptionPrefix, specialHandling + ": For header key '" + expectedHeaderKey + "', the header value with '" + expectedHeaderValue + "' correctly did NOT match the actual header value of '" + storedActualHeaderValue + "'.")
         } else {
-          assertionFail(assertionDescriptionPrefix, "For header key '" + expectedHeaderKey + "', the header value with notThisExpectedValue '" + expectedHeaderValue + "' INCORRECTLY DID match the actual header value of '" + storedActualHeaderValue + "'.")
+          assertionFail(assertionDescriptionPrefix, specialHandling + ": For header key '" + expectedHeaderKey + "', the header value with '" + expectedHeaderValue + "' INCORRECTLY DID match the actual header value of '" + storedActualHeaderValue + "'.")
         }
       }
     } else if (specialHandling === 'setAsEnvironmentVariable') {
@@ -509,25 +506,28 @@ function xtest() {
           }
         }
       } else {
-        //Validating an unordered array of objects
-        for (i = 0; i < copyOfUnorderedArrayToValidate.length; i++) {
+        //Iterate over validationList to see if any items have specialHandling = `notThisExpectedValue`
+        var notThisExpectedValueFlag = false
+        for (j = 0; j < validationList.length; j++) {
+          if (validationList[j].hasOwnProperty('specialHandling')) {
+            if (validationList[j]['specialHandling']  === 'notThisExpectedValue') {
+              notThisExpectedValueFlag = true
+              break
+            }
+          }
+        }
+        
+        //If strictValidationEnabled = false and specialHandling = `notThisExpectedValue` we need to validate differently
+        if (strictValidationEnabled === false && notThisExpectedValueFlag === true) {
+          //This block requires a different type of validation when 1. strictValidationEnabled = false and 2. specialHandling = `notThisExpectedValue`
 
-          const numberOfArrayItemsToValidate = getObjectPropertyCount(cleanObjectExceptEmptyString(copyOfUnorderedArrayToValidate[i]))
+          if (validationList.length > 1) {
+            //FAIL: User error
+            assertionFail(assertionDescriptionPrefix, "Oops, expectResponseBodyToHaveUnorderedArray() error: Only 1 assertion item is allowd in validationList when using strictValidationEnabled = false and specialHandling = 'notThisExpectedValue'.")
+            return
+          }
 
           for (j = 0; j < validationList.length; j++) {
-
-            //Quick check when strictValidationEnabled
-            if (strictValidationEnabled === true) {
-              //Can quickly break out of loop if counts do not match
-              if (numberOfArrayItemsToValidate !== validationList.length) {
-                //console.log(`No need to continue with loop: numberOfArrayItemsToValidate (${numberOfArrayItemsToValidate}) does not match validationList.length (${validationList.length})`)
-                matchFound = false
-                break
-              } else {
-                //console.log(`Continue with loop: numberOfArrayItemsToValidate (${numberOfArrayItemsToValidate}) does match validationList.length (${validationList.length})`)
-              }
-            }
-
             //Required: pathToProperty
             if ( (validationList[j].hasOwnProperty('pathToProperty')) && (validationList[j]['pathToProperty'] !== "") ) {
               pathToProperty = validationList[j]['pathToProperty']
@@ -551,118 +551,184 @@ function xtest() {
               specialHandling = undefined
             }
 
-            jsonPathToProperty = joinBasePathIndexAndPathToProperty(jsonBasePathToArray, i, pathToProperty)
 
-            actualValue = getObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
+            //Validating an unordered array of objects
+            for (i = 0; i < copyOfUnorderedArrayToValidate.length; i++) {
+              jsonPathToProperty = joinBasePathIndexAndPathToProperty(jsonBasePathToArray, i, pathToProperty)
 
-            //Support notThisExpectedKey
-            if (specialHandling === 'notThisExpectedKey') {
-              if (actualValue === undefined) {
-                testResult['passed'] = true
-                testResult['description'] = "The jsonPathToProperty '" + jsonPathToProperty + "' with notThisExpectedKey correctly does NOT exist."
-                matchFound = true
-              } else {
-                testResult['passed'] = false
-                testResult['description'] = "The jsonPathToProperty '" + jsonPathToProperty + "' with notThisExpectedKey INCORRECTLY exists and has actualValue '" + actualValue + "'."
-                matchFound = false
-                break
+              actualValue = getObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
+
+              testResult = testExpectedValueWithActualValue(expectedValue, actualValue, specialHandling, jsonPathToProperty)
+
+              if (testResult['passed'] === false) {
+                //FAIL
+                assertionFail(assertionDescriptionPrefix, testResult['description'])
+                return
               }
-            } else {
-              if (actualValue !== undefined) {
-                
-                testResult = testExpectedValueWithActualValue(expectedValue, actualValue, specialHandling, jsonPathToProperty)
-                
-                if (testResult['passed'] === true) {
+            }
+
+            //If we made it here, test passed
+            assertionPass(assertionDescriptionPrefix, "With specialHandling = 'notThisExpectedValue' and strictValidationEnabled = false, expectedValue '" + expectedValue + "' with pathToProperty '" + pathToProperty + "' was successfully NOT FOUND in any of the response array objects.")
+          }
+
+        } else {
+          //This block is the normal way of validating expectResponseBodyToHaveUnorderedArray
+
+          //Validating an unordered array of objects
+          for (i = 0; i < copyOfUnorderedArrayToValidate.length; i++) {
+
+            const numberOfArrayItemsToValidate = getObjectPropertyCount(cleanObjectExceptEmptyString(copyOfUnorderedArrayToValidate[i]))
+
+            for (j = 0; j < validationList.length; j++) {
+
+              //Quick check when strictValidationEnabled
+              if (strictValidationEnabled === true) {
+                //Can quickly break out of loop if counts do not match
+                if (numberOfArrayItemsToValidate !== validationList.length) {
+                  //console.log(`No need to continue with loop: numberOfArrayItemsToValidate (${numberOfArrayItemsToValidate}) does not match validationList.length (${validationList.length})`)
+                  matchFound = false
+                  break
+                } else {
+                  //console.log(`Continue with loop: numberOfArrayItemsToValidate (${numberOfArrayItemsToValidate}) does match validationList.length (${validationList.length})`)
+                }
+              }
+
+              //Required: pathToProperty
+              if ( (validationList[j].hasOwnProperty('pathToProperty')) && (validationList[j]['pathToProperty'] !== "") ) {
+                pathToProperty = validationList[j]['pathToProperty']
+              } else {
+                //FAIL: User error
+                assertionFail(assertionDescriptionPrefix, "Oops, expectResponseBodyToHaveUnorderedArray() error: Missing required 'pathToProperty' in validationList item '" + j + "'.")
+                return
+              }
+
+              //Optional: expectedValue
+              if (validationList[j].hasOwnProperty('expectedValue')) {
+                expectedValue = validationList[j]['expectedValue']
+              } else {
+                expectedValue = undefined
+              }
+
+              //Optional: specialHandling
+              if (validationList[j].hasOwnProperty('specialHandling')) {
+                specialHandling = validationList[j]['specialHandling']
+              } else {
+                specialHandling = undefined
+              }
+
+              jsonPathToProperty = joinBasePathIndexAndPathToProperty(jsonBasePathToArray, i, pathToProperty)
+
+              actualValue = getObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
+
+              //Support notThisExpectedKey
+              if (specialHandling === 'notThisExpectedKey') {
+                if (actualValue === undefined) {
+                  testResult['passed'] = true
+                  testResult['description'] = "The jsonPathToProperty '" + jsonPathToProperty + "' with notThisExpectedKey correctly does NOT exist."
                   matchFound = true
                 } else {
+                  testResult['passed'] = false
+                  testResult['description'] = "The jsonPathToProperty '" + jsonPathToProperty + "' with notThisExpectedKey INCORRECTLY exists and has actualValue '" + actualValue + "'."
                   matchFound = false
                   break
                 }
               } else {
-                matchFound = false
-                break
+                if (actualValue !== undefined) {
+                  
+                  testResult = testExpectedValueWithActualValue(expectedValue, actualValue, specialHandling, jsonPathToProperty)
+                  
+                  if (testResult['passed'] === true) {
+                    matchFound = true
+                  } else {
+                    matchFound = false
+                    break
+                  }
+                } else {
+                  matchFound = false
+                  break
+                }
               }
             }
+
+            if (matchFound === true) {
+              //Match found, all done
+              allItemsMatch = true
+              arrayIndexMatch = i
+              break
+            } else {
+              //No match found, try next array index
+              allItemsMatch = false
+            }
           }
 
-          if (matchFound === true) {
-            //Match found, all done
-            allItemsMatch = true
-            arrayIndexMatch = i
-            break
-          } else {
-            //No match found, try next array index
-            allItemsMatch = false
-          }
-        }
+          if (allItemsMatch === true) {
+            //PASS
+            for (j = 0; j < validationList.length; j++) {
+              //Required: pathToProperty
+              pathToProperty = validationList[j]['pathToProperty']
 
-        if (allItemsMatch === true) {
-          //PASS
-          for (j = 0; j < validationList.length; j++) {
-            //Required: pathToProperty
-            pathToProperty = validationList[j]['pathToProperty']
-
-            //Optional: expectedValue
-            if (validationList[j].hasOwnProperty('expectedValue')) {
-              expectedValue = validationList[j]['expectedValue']
-            } else {
-              expectedValue = undefined
-            }
-
-            //Optional: specialHandling
-            if (validationList[j].hasOwnProperty('specialHandling')) {
-              specialHandling = validationList[j]['specialHandling']
-            } else {
-              specialHandling = undefined
-            }
-
-            jsonPathToProperty = joinBasePathIndexAndPathToProperty(jsonBasePathToArray, arrayIndexMatch, pathToProperty)
-
-            actualValue = getObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
-
-            //Support for notThisExpectedKey
-            if (specialHandling === 'notThisExpectedKey') {
-              if (actualValue === undefined) {
-                testResult['passed'] = true
-                testResult['description'] = "The jsonPathToProperty '" + jsonPathToProperty + "' with notThisExpectedKey correctly does NOT exist."
+              //Optional: expectedValue
+              if (validationList[j].hasOwnProperty('expectedValue')) {
+                expectedValue = validationList[j]['expectedValue']
               } else {
-                testResult['passed'] = false
-                testResult['description'] = "The jsonPathToProperty '" + jsonPathToProperty + "' with notThisExpectedKey INCORRECTLY exists and has actualValue '" + actualValue + "'."
+                expectedValue = undefined
               }
-            } else {
-              testResult = testExpectedValueWithActualValue(expectedValue, actualValue, specialHandling, jsonPathToProperty)
+
+              //Optional: specialHandling
+              if (validationList[j].hasOwnProperty('specialHandling')) {
+                specialHandling = validationList[j]['specialHandling']
+              } else {
+                specialHandling = undefined
+              }
+
+              jsonPathToProperty = joinBasePathIndexAndPathToProperty(jsonBasePathToArray, arrayIndexMatch, pathToProperty)
+
+              actualValue = getObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
+
+              //Support for notThisExpectedKey
+              if (specialHandling === 'notThisExpectedKey') {
+                if (actualValue === undefined) {
+                  testResult['passed'] = true
+                  testResult['description'] = "The jsonPathToProperty '" + jsonPathToProperty + "' with notThisExpectedKey correctly does NOT exist."
+                } else {
+                  testResult['passed'] = false
+                  testResult['description'] = "The jsonPathToProperty '" + jsonPathToProperty + "' with notThisExpectedKey INCORRECTLY exists and has actualValue '" + actualValue + "'."
+                }
+              } else {
+                testResult = testExpectedValueWithActualValue(expectedValue, actualValue, specialHandling, jsonPathToProperty)
+              }
+
+              assertionPass(assertionDescriptionPrefix, testResult['description'])
+
+              //Delete jsonPathToProperty from copyOfResponseBodyObject
+              deleteObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
             }
+          } else {
+            //FAIL
+            for (j = 0; j < validationList.length; j++) {
+              //Required: pathToProperty
+              pathToProperty = validationList[j]['pathToProperty']
 
-            assertionPass(assertionDescriptionPrefix, testResult['description'])
+              //Optional: expectedValue
+              if (validationList[j].hasOwnProperty('expectedValue')) {
+                expectedValue = validationList[j]['expectedValue']
+                testDescriptionExpectedValue = " expectedValue: '" + expectedValue + "'"
+              } else {
+                expectedValue = undefined
+                testDescriptionExpectedValue = ''
+              }
 
-            //Delete jsonPathToProperty from copyOfResponseBodyObject
-            deleteObjectValueByPath(copyOfResponseBodyObject, jsonPathToProperty)
-          }
-        } else {
-          //FAIL
-          for (j = 0; j < validationList.length; j++) {
-            //Required: pathToProperty
-            pathToProperty = validationList[j]['pathToProperty']
+              //Optional: specialHandling
+              if (validationList[j].hasOwnProperty('specialHandling')) {
+                specialHandling = validationList[j]['specialHandling']
+                testDescriptionSpecialHandling = " specialHandling: '" + specialHandling + "'"
+              } else {
+                specialHandling = undefined
+                testDescriptionSpecialHandling = ''
+              }
 
-            //Optional: expectedValue
-            if (validationList[j].hasOwnProperty('expectedValue')) {
-              expectedValue = validationList[j]['expectedValue']
-              testDescriptionExpectedValue = " expectedValue: '" + expectedValue + "'"
-            } else {
-              expectedValue = undefined
-              testDescriptionExpectedValue = ''
+              assertionFail(assertionDescriptionPrefix, "pathToProperty: '" + pathToProperty + "'" + testDescriptionExpectedValue + testDescriptionSpecialHandling + ".")
             }
-
-            //Optional: specialHandling
-            if (validationList[j].hasOwnProperty('specialHandling')) {
-              specialHandling = validationList[j]['specialHandling']
-              testDescriptionSpecialHandling = " specialHandling: '" + specialHandling + "'"
-            } else {
-              specialHandling = undefined
-              testDescriptionSpecialHandling = ''
-            }
-
-            assertionFail(assertionDescriptionPrefix, "pathToProperty: '" + pathToProperty + "'" + testDescriptionExpectedValue + testDescriptionSpecialHandling + ".")
           }
         }
       }
@@ -990,56 +1056,78 @@ function xtest() {
         if ( (expectedDate >= actualDateMinus1Second) && (expectedDate <= actualDatePlus1Second) ) {
           //PASS: expectedValue falls within actualValue +- 1 second
           testResult['passed'] = true
-          testResult['description'] = "dateWithin1Sec: Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' successfully fell within actualValue +- 1 second '" + actualValue + "'."
+          testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' successfully fell within actualValue +- 1 second '" + actualValue + "'."
           return testResult
         } else {
           //FAIL: expectedValue did not fall within actualValue +- 1 second
           testResult['passed'] = false
-          testResult['description'] = "dateWithin1Sec: Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' did NOT fall within actualValue +- 1 second '" + actualValue + "'."
+          testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' did NOT fall within actualValue +- 1 second '" + actualValue + "'."
           return testResult
         }
       } else if (specialHandling === 'isArrayAndEmpty') {
         //expectedValue is not needed for this assertion check - ignore it
 
-        //Check that the type of actualValue is an array
-        if (actualValue.constructor === Array) {
+        if (actualValue !== null && actualValue.constructor === Array) {
+          //Check that the type of actualValue is an array
           if (actualValue.length === 0) {
-            //PASS: expectedValue falls within actualValue +- 1 second
+            //PASS: actualValue is empty array
             testResult['passed'] = true
-            testResult['description'] = "isArrayAndEmpty: Property '" + jsonPathToProperty + "' is an Array and is empty."
+            testResult['description'] =  specialHandling + ": Property '" + jsonPathToProperty + "' is an Array and is empty."
             return testResult
           } else {
             //FAIL: actualValue is not an empty array
             testResult['passed'] = false
-            testResult['description'] = "isArrayAndEmpty: Property '" + jsonPathToProperty + "' is an Array but is NOT empty, it contains '" + actualValue.length + "' items."
+            testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' is an Array but is NOT empty, it contains '" + actualValue.length + "' items."
             return testResult
           }
         } else {
           //FAIL: actualValue is not an array
           testResult['passed'] = false
-          testResult['description'] = "isArrayAndEmpty: Property '" + jsonPathToProperty + "' is NOT an Array '" + actualValue + "'."
+          testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' is NOT an Array type, actualValue: '" + actualValue + "'."
           return testResult
         }
       } else if (specialHandling === 'isArrayAndNotEmpty') {
         //expectedValue is not needed for this assertion check - ignore it
 
         //Check that the type of actualValue is an array
-        if (actualValue.constructor === Array) {
+        if (actualValue !== null && actualValue.constructor === Array) {
           if (actualValue.length === 0) {
             //FAIL: actualValue is an empty array
             testResult['passed'] = false
-            testResult['description'] = "isArrayAndNotEmpty: Property '" + jsonPathToProperty + "' is an Array but is empty."
+            testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' is an Array but is empty."
             return testResult
           } else {
-            //PASS: expectedValue falls within actualValue +- 1 second
+            //PASS: actualValue is an Array and NOT empty
             testResult['passed'] = true
-            testResult['description'] = "isArrayAndNotEmpty: Property '" + jsonPathToProperty + "' is an Array and is NOT empty, it contains '" + actualValue.length + "' items."
+            testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' is an Array and is NOT empty, it contains '" + actualValue.length + "' items."
             return testResult
           }
         } else {
           //FAIL: actualValue is not an array
           testResult['passed'] = false
-          testResult['description'] = "isArrayAndNotEmpty: Property '" + jsonPathToProperty + "' is NOT an Array '" + actualValue + "'."
+          testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' is NOT an Array type, actualValue: '" + actualValue + "'."
+          return testResult
+        }
+      }  else if (specialHandling === 'isArrayAndHasLength') {        
+        var expectedArrayLength = expectedValue
+
+        //Check that the type of actualValue is an array
+        if (actualValue.constructor === Array) {
+          if (actualValue.length === expectedArrayLength) {
+            //PASS: actualValue is an Array and the actualValue length matches expectedArrayLength
+            testResult['passed'] = true
+            testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' is an Array and the actual array length (" + actualValue.length + ") matches the expected array length (" + expectedArrayLength + ")."
+            return testResult
+          } else {
+            //FAIL: actualValue length is not the same as expectedArrayLength
+            testResult['passed'] = false
+            testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' is an Array but the actual array length (" + actualValue.length + ") DOES NOT match the expected array length (" + expectedArrayLength + ")."
+            return testResult
+          }
+        } else {
+          //FAIL: actualValue is not an array
+          testResult['passed'] = false
+          testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' is NOT an Array '" + actualValue + "'."
           return testResult
         }
       } else if (specialHandling === 'setAsEnvironmentVariable') {
@@ -1049,7 +1137,7 @@ function xtest() {
         pm.environment.set(environmentVariableKey, environmentVariableValue)
 
         testResult['passed'] = true
-        testResult['description'] = "setAsEnvironmentVariable: Property '" + jsonPathToProperty + "' was set as an environment variable with key '" + environmentVariableKey + "' and value '" + environmentVariableValue + "'."
+        testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' was set as an environment variable with key '" + environmentVariableKey + "' and value '" + environmentVariableValue + "'."
         return testResult
       } else if (specialHandling === 'setAsCollectionVariable') {
         collectionVariableKey = expectedValue
@@ -1058,28 +1146,28 @@ function xtest() {
         pm.collectionVariables.set(collectionVariableKey, collectionVariableValue)
 
         testResult['passed'] = true
-        testResult['description'] = "setAsCollectionVariable: Property '" + jsonPathToProperty + "' was set as a variable with collectionVariableKey '" + collectionVariableKey + "' and collectionVariableValue '" + collectionVariableValue + "'."
+        testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' was set as a variable with collectionVariableKey '" + collectionVariableKey + "' and collectionVariableValue '" + collectionVariableValue + "'."
         return testResult
       } else if (specialHandling === 'notThisExpectedValue') {
         if (regExpTrue === true) {
           //Compare using RegExp
           if (expectedValue.test(actualValue) !== true) {
             testResult['passed'] = true
-            testResult['description'] = "notThisExpectedValue: Property '" + jsonPathToProperty + "' with RegExp expectedValue '" + expectedValue + "' CORRECTLY did NOT match actualValue '" + actualValue + "'."
+            testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' with RegExp expectedValue '" + expectedValue + "' CORRECTLY did NOT match actualValue '" + actualValue + "'."
             return testResult
           } else {
             testResult['passed'] = false
-            testResult['description'] = "notThisExpectedValue: Property '" + jsonPathToProperty + "' with RegExp expectedValue '" + expectedValue + "' INCORRECTLY DID match actualValue '" + actualValue + "'."
+            testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' with RegExp expectedValue '" + expectedValue + "' INCORRECTLY DID match actualValue '" + actualValue + "'."
             return testResult
           }
         } else {
           if (expectedValue !== actualValue) {
             testResult['passed'] = true
-            testResult['description'] = "Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' and notThisExpectedValue CORRECTLY did NOT match actualValue '" + actualValue + "'."
+            testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' CORRECTLY did NOT match actualValue '" + actualValue + "'."
             return testResult
           } else {
             testResult['passed'] = false
-            testResult['description'] = "Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' and notThisExpectedValue INCORRECTLY DID match actualValue '" + actualValue + "'."
+            testResult['description'] = specialHandling + ": Property '" + jsonPathToProperty + "' with expectedValue '" + expectedValue + "' INCORRECTLY DID match actualValue '" + actualValue + "'."
             return testResult
           }
         }

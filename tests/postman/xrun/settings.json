@@ -1,0 +1,6 @@
+{
+    "limitConcurrency": 10,
+    "autoOpenTestResultHtml": true,
+    "projectName": "xtest",
+    "environmentType": "prod"
+  }

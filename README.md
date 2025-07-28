@@ -945,16 +945,17 @@ Live Demo Showing Usage:
 ### Special Handling
 There are a number of special handling options supported in the assertion functions above. This table provides an overview.
 
-|Special Handling Identifier     | Description                                                                              | Supported in expectResponseStatusCodeToBe() | Supported in expectResponseToHaveHeader() | Supported in expectResponseBodyToHaveProperty() | Supported in expectResponseBodyToHaveUnorderedArray() |
-|--------------------------------|------------------------------------------------------------------------------------------|---------------------------------------------|-------------------------------------------|-------------------------------------------------|-------------------------------------------------------|
-|`setAsEnvironmentVariable`      | Set actualValue to a Postman `Environment` type variable.                                | Yes                                         | Yes                                       | Yes                                             | Yes                                                   |
-|`setAsCollectionVariable`       | Set actualValue to a Postman `Collection` type variable.                                 | Yes                                         | Yes                                       | Yes                                             | Yes                                                   |
-|`notThisExpectedKey`            | Assert that property `key` does not exist.                                               | No                                          | Yes                                       | Yes                                             | Yes                                                   |
-|`notThisExpectedValue`          | Assert that property `value` does not exist.                                             | Yes                                         | Yes                                       | Yes                                             | No (TBD)                                              |
-|`dateAsEpoch`                   | Assert that property value is valid epoch formatted date (internally normalized).        | No                                          | No                                        | Yes                                             | Yes                                                   |
-|`dateWithin1Sec`                | Assert that property value is a date/time within +- 1 second tolerance.                  | No                                          | No                                        | Yes                                             | Yes                                                   |
-|`isArrayAndEmpty`               | Assert that property is an Array type and is empty.                                      | No                                          | No                                        | Yes                                             | Yes                                                   |
-|`isArrayAndNotEmpty`            | Assert that property is an Array type and is NOT empty.                                  | No                                          | No                                        | Yes                                             | Yes                                                   |
+|Special Handling Identifier     | Description                                                                              |
+|--------------------------------|------------------------------------------------------------------------------------------|
+|`setAsEnvironmentVariable`      | Set actualValue to a Postman `Environment` type variable.                                |
+|`setAsCollectionVariable`       | Set actualValue to a Postman `Collection` type variable.                                 |
+|`notThisExpectedKey`            | Assert that property `key` does not exist.                                               |
+|`notThisExpectedValue`          | Assert that property `value` does not exist.                                             |
+|`dateAsEpoch`                   | Assert that property value is valid epoch formatted date (internally normalized).        |
+|`dateWithin1Sec`                | Assert that property value is a date/time within +- 1 second tolerance.                  |
+|`isArrayAndEmpty`               | Assert that property is an Array type and is empty.                                      |
+|`isArrayAndNotEmpty`            | Assert that property is an Array type and is NOT empty.                                  |
+|`isArrayAndHasLength`           | Assert that property is an Array type and has length/size of `expectedValue`.            |
 
 
 ## Helper Functions
