@@ -22,6 +22,7 @@
 							"",
 							"//Validate response body",
 							"expectResponseBodyToHaveProperty(\"account\", null, \"isArrayAndNotEmpty\");",
+							"expectResponseBodyToHaveProperty(\"account.0.nullArray\", null);",
 							"",
 							"//End testing using xtest",
 							"endXTest();"

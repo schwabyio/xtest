@@ -22,6 +22,7 @@
 							"",
 							"//Validate response body",
 							"expectResponseBodyToHaveProperty(\"emptyArray\", null, \"isArrayAndEmpty\");",
+							"expectResponseBodyToHaveProperty(\"nullArray\", null);",
 							"",
 							"//End testing using xtest",
 							"endXTest();"
@@ -75,6 +76,7 @@
 							"",
 							"//Validate response body",
 							"expectResponseBodyToHaveProperty(\"emptyArray\", null, \"isArrayAndEmpty\");",
+							"expectResponseBodyToHaveProperty(\"nullArray\", null);",
 							"",
 							"//End testing using xtest",
 							"endXTest();"
@@ -129,7 +131,8 @@
 							"//Validate response body",
 							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
 							"  {pathToProperty: \"id.value\", expectedValue: \"account-1\"},",
-							"  {pathToProperty: \"subAccounts\", expectedValue: null, specialHandling: \"isArrayAndEmpty\"}",
+							"  {pathToProperty: \"subAccounts\", expectedValue: null, specialHandling: \"isArrayAndEmpty\"},",
+							"  {pathToProperty: \"nullArray\", expectedValue: null}",
 							"]);",
 							"",
 							"//End testing using xtest",
