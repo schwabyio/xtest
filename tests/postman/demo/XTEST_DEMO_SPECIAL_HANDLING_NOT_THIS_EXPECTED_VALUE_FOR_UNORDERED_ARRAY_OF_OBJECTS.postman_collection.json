@@ -1,0 +1,98 @@
+{
+	"info": {
+		"_postman_id": "d2e2a2a1-2aa4-406e-ac13-d193694eceee",
+		"name": "XTEST_DEMO_SPECIAL_HANDLING_NOT_THIS_EXPECTED_VALUE_FOR_UNORDERED_ARRAY_OF_OBJECTS",
+		"description": "Objective: Validate special handling `notThisExpectedValue` when using expectResponseBodyToHaveUnorderedArray().",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "28098991"
+	},
+	"item": [
+		{
+			"name": "Validate a response body with an unordered array of objects with notThisExpectedValue (without strict validation)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//Load xtest",
+							"var xtest = eval(pm.globals.get(\"xtest\"));",
+							"",
+							"//Start testing using xtest",
+							"startXTest(pm, false);",
+							"",
+							"//Validate response body",
+							"expectResponseBodyToHaveUnorderedArray(\"items\", [",
+							"  {pathToProperty: \"name\", expectedValue: \"Item 0\", specialHandling: \"notThisExpectedValue\"}",
+							"]);",
+							"",
+							"expectResponseBodyToHaveUnorderedArray(\"items\", [",
+							"  {pathToProperty: \"name\", expectedValue: \"Item 15\", specialHandling: \"notThisExpectedValue\"}",
+							"]);",
+							"",
+							"expectResponseBodyToHaveUnorderedArray(\"items\", [",
+							"  {pathToProperty: \"name\", expectedValue: \"Item 4\"},",
+							"  {pathToProperty: \"extraInfo\", expectedValue: \"This is disabled\"},",
+							"  {pathToProperty: \"enabled\", expectedValue: false},",
+							"]);",
+							"",
+							"//End testing using xtest",
+							"endXTest();"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://xtest-demo.httpsim.schwaby.io/unorderedArrayNotThisExpectedValue",
+					"protocol": "https",
+					"host": [
+						"xtest-demo",
+						"httpsim",
+						"schwaby",
+						"io"
+					],
+					"path": [
+						"unorderedArrayNotThisExpectedValue"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
