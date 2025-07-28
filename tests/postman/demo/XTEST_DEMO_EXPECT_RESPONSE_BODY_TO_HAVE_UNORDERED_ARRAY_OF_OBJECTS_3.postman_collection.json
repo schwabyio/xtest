@@ -1,10 +1,10 @@
 {
 	"info": {
-		"_postman_id": "b99e7713-ce09-4989-9b2a-8211672a0b26",
+		"_postman_id": "e8ba08e0-fb2a-4127-9b8b-69536d035dcf",
 		"name": "XTEST_DEMO_EXPECT_RESPONSE_BODY_TO_HAVE_UNORDERED_ARRAY_OF_OBJECTS_3",
 		"description": "Objective: Validate a response body with an unordered array of objects, with specialHandling \"notThisExpectedKey\" and \"notThisExpectedValue\".\n\n``` javascript\nexpectResponseBodyToHaveUnorderedArray(jsonPathToArray [String], validationList [Array of Objects]);\n\n```",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "24782047"
+		"_exporter_id": "28098991"
 	},
 	"item": [
 		{
@@ -23,16 +23,26 @@
 							"//Validate response body",
 							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
 							"  {pathToProperty: \"id.value\", expectedValue: \"KkGHo7-dCNstHv8KT28uNzMZficQcaQwg31wIpM_uwo\"},",
-							"  {pathToProperty: \"description.notValid\", expectedValue: null, specialHandling: \"notThisExpectedKey\"},",
-							"  {pathToProperty: \"description\", expectedValue: \"wrong description\", specialHandling: \"notThisExpectedValue\"},",
-							"  {pathToProperty: \"category\", expectedValue: /WRONG CATEGORY/, specialHandling: \"notThisExpectedValue\"},",
+							"  {pathToProperty: \"description.notValid\", expectedValue: null, specialHandling: \"notThisExpectedKey\"}",
+							"]);",
+							"",
+							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
+							"  {pathToProperty: \"description\", expectedValue: \"wrong description\", specialHandling: \"notThisExpectedValue\"}",
+							"]);",
+							"",
+							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
+							"  {pathToProperty: \"category\", expectedValue: /WRONG CATEGORY/, specialHandling: \"notThisExpectedValue\"}",
+							"]);",
+							"",
+							"expectResponseBodyToHaveUnorderedArray(\"account\", [",
 							"  {pathToProperty: \"balance.currentBalance.amount\", expectedValue: 4.73, specialHandling: \"notThisExpectedValue\"}",
 							"]);",
 							"",
 							"//End testing using xtest",
 							"endXTest();"
 						],
-						"type": "text/javascript"
+						"type": "text/javascript",
+						"packages": {}
 					}
 				}
 			],
